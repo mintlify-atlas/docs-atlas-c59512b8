@@ -385,7 +385,7 @@ Status indicator badge for projects with color-coded states.
 ### Props
 
 <ParamField path="status" type="ProjectStatus" required>
-  Project status: "completed", "in-progress", or "maintenance"
+  Project status: "active", "maintenance", "completed", "paused", "planned", or "in_evaluation"
 </ParamField>
 
 ### Code
@@ -426,25 +426,34 @@ const tooltip = t(projectStatusTooltipKeys[status]);
 ### Status Types
 
 ```typescript
-type ProjectStatus = "completed" | "in-progress" | "maintenance";
+type ProjectStatus =
+  | "active"
+  | "maintenance"
+  | "completed"
+  | "paused"
+  | "planned"
+  | "in_evaluation";
 ```
 
 ### Status Styles (from constants)
 
 ```typescript
 const projectStatusBadgeClasses: Record<ProjectStatus, string> = {
-  completed: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400",
-  "in-progress": "bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400",
-  maintenance: "bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400",
+  active: "bg-emerald-100 text-emerald-700 ring-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20",
+  maintenance: "bg-blue-100 text-blue-700 ring-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:ring-blue-500/20",
+  completed: "bg-rose-100 text-rose-700 ring-rose-200 dark:bg-rose-500/10 dark:text-rose-400 dark:ring-rose-500/20",
+  paused: "bg-amber-100 text-amber-700 ring-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:ring-amber-500/20",
+  planned: "bg-violet-100 text-violet-700 ring-violet-200 dark:bg-violet-500/10 dark:text-violet-400 dark:ring-violet-500/20",
+  in_evaluation: "bg-cyan-100 text-cyan-700 ring-cyan-200 dark:bg-cyan-500/10 dark:text-cyan-400 dark:ring-cyan-500/20",
 };
 ```
 
 ### Usage
 
 ```astro
+<ProjectStatusBadge status="active" />
 <ProjectStatusBadge status="completed" />
-<ProjectStatusBadge status="in-progress" />
-<ProjectStatusBadge status="maintenance" />
+<ProjectStatusBadge status="paused" />
 ```
 
 ---

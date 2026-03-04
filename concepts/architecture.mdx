@@ -223,3 +223,81 @@ src/
 <Warning>
   When adding new sections, ensure the URL key in `SECTION_COMPONENTS` matches the `url` field in your locale files' `sections` array.
 </Warning>
+
+## Utilities and Constants
+
+### Utilities (`src/utils/index.ts`)
+
+The project includes utility functions for common operations:
+
+```typescript src/utils/index.ts
+export const appendBaseUrl = (url: string) => {
+  const baseUrl = import.meta.env.PUBLIC_BASE_URL || "";
+  return `${baseUrl}${url}`;
+};
+```
+
+**Usage**: Prepends the base URL from environment variables to relative paths, useful for deployed sites with custom base paths.
+
+### Constants (`src/constants/index.ts`)
+
+Shared constants and configuration used throughout the application:
+
+```typescript src/constants/index.ts
+import type { ProjectStatus, SocialNetwork } from "@/types";
+
+// Project status badge styling maps
+export const projectStatusLabelKeys: Record<ProjectStatus, TranslationKey>;
+export const projectStatusTooltipKeys: Record<ProjectStatus, TranslationKey>;
+export const baseBadgeClasses: string;
+export const projectStatusBadgeClasses: Record<ProjectStatus, string>;
+
+// Social networks configuration
+export const socialNetworks: SocialNetwork[] = [
+  {
+    label: "GitHub",
+    icon: { name: "github", isLucideIcon: false, size: 32 },
+    url: "https://github.com/Jorgemacias-12",
+  },
+  {
+    label: "LinkedIn",
+    icon: { name: "linkedin", isLucideIcon: false, size: 32 },
+    url: "https://www.linkedin.com/in/jamz3/",
+  },
+];
+```
+
+These constants centralize styling rules and configuration that need to be consistent across components.
+
+### Type Definitions (`src/types/index.ts`)
+
+All TypeScript interfaces and types are centralized in the types file:
+
+```typescript src/types/index.ts
+export type Locale = "en" | "es";
+export type Theme = "light" | "dark";
+export type SectionVariant = "hero" | "normal";
+export type SkillVariant = "card" | "pill";
+export type ProjectStatus =
+  | "active"
+  | "maintenance"
+  | "completed"
+  | "paused"
+  | "planned"
+  | "in_evaluation";
+
+export interface Project {
+  name: string;
+  description: string;
+  status: ProjectStatus;
+  context: ProjectContext;
+  tags: Skill[];
+  images: Image[];
+  demo_link?: LinkItem;
+  repo_link: LinkItem;
+}
+
+// ... more types
+```
+
+This provides type safety throughout the application and makes it easy to maintain consistent data structures.
