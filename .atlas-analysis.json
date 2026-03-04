@@ -1,0 +1,78 @@
+{
+  "projectType": "frontend",
+  "projectName": "Jorge Macias Portfolio",
+  "projectDescription": "A modern portfolio website built with Astro showcasing developer projects, experience, skills, and education.",
+  "theme": "willow",
+  "primaryColor": "#FF5C00",
+  "lightColor": "#FF8333",
+  "darkColor": "#7A3600",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Getting Started",
+        "pages": [
+          "introduction",
+          "installation",
+          "project-structure"
+        ]
+      },
+      {
+        "group": "Core Concepts",
+        "pages": [
+          "concepts/architecture",
+          "concepts/internationalization",
+          "concepts/theming"
+        ]
+      },
+      {
+        "group": "Components",
+        "pages": [
+          "components/overview",
+          "components/layout",
+          "components/sections",
+          "components/ui-elements"
+        ]
+      },
+      {
+        "group": "Configuration",
+        "pages": [
+          "configuration/content",
+          "configuration/locales",
+          "configuration/styling"
+        ]
+      },
+      {
+        "group": "Guides",
+        "pages": [
+          "guides/adding-projects",
+          "guides/adding-experience",
+          "guides/customizing-theme",
+          "guides/deployment"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Multilingual support (English/Spanish)",
+    "Dark/light theme toggle",
+    "Responsive design with Tailwind CSS",
+    "Component-based architecture with Astro",
+    "Dynamic content sections",
+    "Project showcase with image galleries",
+    "SEO optimization with sitemap",
+    "Performance optimization with compression and PurgeCSS"
+  ],
+  "publicApiSurface": [
+    "Section component - Reusable section wrapper",
+    "Project component - Project showcase card",
+    "Experience component - Work experience display",
+    "Education component - Academic background display",
+    "Skill component - Skill badge with icon",
+    "Carrousel component - Image gallery viewer",
+    "Header component - Navigation header",
+    "Footer component - Site footer with social links",
+    "ThemeToggler component - Dark/light mode switch",
+    "getTranslation() - i18n translation helper",
+    "SECTION_COMPONENTS - Dynamic section loader configuration"
+  ]
+}
