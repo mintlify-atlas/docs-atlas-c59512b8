@@ -1,0 +1,375 @@
+---
+title: Locale Configuration
+description: Learn how to configure multi-language support, site metadata, and localized content
+---
+
+The Jorge Macias Portfolio supports internationalization (i18n) with separate locale files for each language.
+
+## Locale File Structure
+
+Locale files are JSON files located in `src/locales/`:
+
+```
+src/locales/
+├── en.json  # English translations
+└── es.json  # Spanish translations
+```
+
+Each locale file contains:
+- Site metadata (title, description, keywords)
+- Navigation section labels
+- Content data (about, skills, experience, projects, education)
+- Component text and UI labels
+
+## Adding a New Locale
+
+To add a new language:
+
+### 1. Configure Astro i18n
+
+Update `astro.config.mjs` to include your new locale:
+
+```js
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  site: "https://jorgemacias.dev",
+  i18n: {
+    defaultLocale: "es",
+    locales: ["en", "es", "fr"], // Add new locale here
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
+});
+```
+
+### 2. Create Locale File
+
+Create a new JSON file in `src/locales/` (e.g., `fr.json`) with the complete structure:
+
+```json
+{
+  "site": { /* ... */ },
+  "sections": [ /* ... */ ],
+  "sections_data": { /* ... */ },
+  "components": { /* ... */ }
+}
+```
+
+### 3. Translate All Content
+
+Translate every field in the new locale file to maintain feature parity.
+
+## Site Metadata
+
+Configure SEO and meta information in the `site` object:
+
+```json
+"site": {
+  "title": "Jorge Macias | Software Developer",
+  "description": "Software developer specialized in frontend, backend and desktop applications. Explore my projects and portfolio.",
+  "keywords": [
+    "Jorge Macias",
+    "Jorge Antonio Macias Zambrano",
+    "Jorge Macias portfolio",
+    "web developer",
+    "frontend developer",
+    "React developer",
+    "web developer Puerto Vallarta",
+    "software engineer Puerto Vallarta",
+    "developer portfolio",
+    "web development projects",
+    "React applications",
+    "TypeScript",
+    "JavaScript",
+    "WPF",
+    "C#",
+    "Astro",
+    "Tailwind",
+    "tech portfolio"
+  ],
+  "author": "Jorge Antonio Macias Zambrano",
+  "author_shortname": "Jorge Macias"
+}
+```
+
+### Site Fields
+
+- `title` - Page title shown in browser tab and search results
+- `description` - Meta description for SEO (150-160 characters recommended)
+- `keywords` - Array of SEO keywords and phrases
+- `author` - Full author name
+- `author_shortname` - Short version of name for display
+
+### SEO Best Practices
+
+- Keep title under 60 characters
+- Write unique descriptions for each locale
+- Include relevant keywords naturally
+- Add location-based keywords if relevant
+- Include technology stack in keywords
+
+## Navigation Sections
+
+Define the main navigation structure:
+
+```json
+"sections": [
+  {
+    "label": "About Me",
+    "url": "about"
+  },
+  {
+    "label": "Skills",
+    "url": "skills"
+  },
+  {
+    "label": "Professional Experience",
+    "url": "experience"
+  },
+  {
+    "label": "Projects",
+    "url": "projects"
+  },
+  {
+    "label": "Education",
+    "url": "education"
+  }
+]
+```
+
+### Section Fields
+
+- `label` - Display text in navigation menu
+- `url` - Section identifier (used as anchor/route)
+
+**Important**: The `url` field should remain consistent across all locales, only translate the `label`.
+
+### Spanish Example
+
+```json
+"sections": [
+  {
+    "label": "Acerca de Mí",
+    "url": "about"
+  },
+  {
+    "label": "Habilidades",
+    "url": "skills"
+  },
+  {
+    "label": "Experiencia Profesional",
+    "url": "experience"
+  },
+  {
+    "label": "Proyectos",
+    "url": "projects"
+  },
+  {
+    "label": "Educación",
+    "url": "education"
+  }
+]
+```
+
+## Component Text
+
+The `components` object contains all UI text for various components:
+
+### Header Component
+
+```json
+"header": {
+  "title": "Portfolio",
+  "menu_opener_title": "Button to open mobile menu",
+  "home_url": "/",
+  "languageUrl": "/",
+  "languageCaption": "ES",
+  "flagUrl": "/mexico.svg",
+  "avatarAlt": "Chimuelo avatar for me",
+  "version_title": "version",
+  "version_caption": "Made with ❤️"
+}
+```
+
+#### Header Fields
+
+- `title` - Site title in header
+- `menu_opener_title` - Accessible label for mobile menu button
+- `home_url` - Home page URL
+- `languageUrl` - URL for alternate language (e.g., `/en` from Spanish)
+- `languageCaption` - Language switcher button text
+- `flagUrl` - Path to flag icon for language switcher
+- `avatarAlt` - Alt text for avatar image
+- `version_title` - Label for version number
+- `version_caption` - Footer version text
+
+### Carousel Component
+
+```json
+"carrousel": {
+  "no_preview": "Preview not available",
+  "images_indicator": "images",
+  "open_gallery": "Open gallery",
+  "image": "Image",
+  "image_gallery": "Image gallery",
+  "image_controls": "Image controls",
+  "zoom_in": "Zoom in (+)",
+  "zoom_out": "Zoom out (-)",
+  "rotate": "Rotate (R)",
+  "reset": "Reset",
+  "close": "Close (Esc)",
+  "previous_image": "Previous image",
+  "next_image": "Next image",
+  "thumbnail_navigation": "Thumbnail navigation"
+}
+```
+
+These strings are used throughout the image carousel/lightbox component for projects.
+
+### Education Component
+
+```json
+"education": {
+  "calification_caption": "GPA",
+  "school_link_caption": "Visit website",
+  "is_finished_caption": "completed",
+  "is_not_finished_caption": "in progress"
+}
+```
+
+### Theme Toggler Component
+
+```json
+"theme_toggler": {
+  "title": "Button to switch dark/light theme",
+  "aria-label": "Button that changes the portfolio theme between dark/light"
+}
+```
+
+### Project Status Badge Component
+
+```json
+"project_status_badge": {
+  "status_labels": {
+    "active": "Active",
+    "maintenance": "Maintenance",
+    "completed": "Completed",
+    "paused": "Paused",
+    "planned": "Planned",
+    "in_evaluation": "In evaluation"
+  },
+  "status_tooltips": {
+    "active": "Project in active development.",
+    "maintenance": "Stable project receiving minor improvements or adjustments.",
+    "completed": "Finished project with no active development.",
+    "paused": "Project temporarily stopped.",
+    "planned": "Project defined, not yet started.",
+    "in_evaluation": "Idea or project under feasibility analysis."
+  }
+}
+```
+
+Labels and tooltips for each project status value.
+
+### Footer Component
+
+```json
+"footer": {
+  "contact_me_caption": "Get In Touch",
+  "contact_paragraph": "Feel free to reach out to discuss,opportunities or just to say hello!",
+  "follow_me_caption": "Follow me",
+  "copyright_notice": "All rights reserved",
+  "contact_link_loading": "loading...",
+  "builded_with_caption": "Made with ❤️"
+}
+```
+
+## Complete Locale Example
+
+Here's how the locales differ:
+
+### English (`en.json`)
+```json
+{
+  "site": {
+    "title": "Jorge Macias | Software Developer",
+    "description": "Software developer specialized in frontend, backend and desktop applications. Explore my projects and portfolio."
+  },
+  "sections": [
+    { "label": "About Me", "url": "about" },
+    { "label": "Skills", "url": "skills" }
+  ],
+  "components": {
+    "header": {
+      "languageUrl": "/",
+      "languageCaption": "ES",
+      "flagUrl": "/mexico.svg"
+    }
+  }
+}
+```
+
+### Spanish (`es.json`)
+```json
+{
+  "site": {
+    "title": "Jorge Macias | Desarrollador de Software",
+    "description": "Desarrollador de software especializado en frontend, backend y aplicaciones de escritorio. Explora mis proyectos y portafolio."
+  },
+  "sections": [
+    { "label": "Acerca de Mí", "url": "about" },
+    { "label": "Habilidades", "url": "skills" }
+  ],
+  "components": {
+    "header": {
+      "languageUrl": "/en",
+      "languageCaption": "EN",
+      "flagUrl": "/usa.svg"
+    }
+  }
+}
+```
+
+## Language Switcher Configuration
+
+Notice how the language switcher is configured differently in each locale:
+
+**From Spanish (default):**
+- `languageUrl: "/en"` - Links to English version
+- `languageCaption: "EN"` - Shows "EN" button
+- `flagUrl: "/usa.svg"` - Shows US flag
+
+**From English:**
+- `languageUrl: "/"` - Links back to Spanish (default locale)
+- `languageCaption: "ES"` - Shows "ES" button  
+- `flagUrl: "/mexico.svg"` - Shows Mexico flag
+
+## Routing Configuration
+
+The portfolio uses Astro's i18n routing with these settings:
+
+```js
+i18n: {
+  defaultLocale: "es",           // Spanish is default
+  locales: ["en", "es"],         // Available languages
+  routing: {
+    prefixDefaultLocale: false,   // Spanish at /, English at /en
+  },
+}
+```
+
+This means:
+- Spanish pages: `https://jorgemacias.dev/`
+- English pages: `https://jorgemacias.dev/en/`
+
+## Best Practices
+
+1. **Complete Translations**: Translate every field, don't leave placeholders
+2. **Cultural Adaptation**: Adapt content culturally, not just linguistically
+3. **Consistent URLs**: Keep `url` fields identical across locales
+4. **Flag Assets**: Store flag icons in `public/` directory
+5. **SEO per Locale**: Write unique, optimized metadata for each language
+6. **Test Both Locales**: Verify all features work in every language
+7. **Maintain Parity**: Keep the same structure and features across all locales

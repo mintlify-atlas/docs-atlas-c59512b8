@@ -1,0 +1,193 @@
+---
+title: Installation
+description: Step-by-step guide to install and run the Jorge Macias portfolio locally
+---
+
+## Prerequisites
+
+Before you begin, ensure you have one of the following JavaScript runtimes installed on your system:
+
+- **Bun** (recommended) - Fast all-in-one JavaScript runtime
+- **Node.js** (v18 or higher) - Traditional Node.js runtime
+- **pnpm** - Fast, disk space efficient package manager
+
+The project is optimized for Bun, but works with any modern JavaScript runtime.
+
+<Note>
+Bun is the recommended runtime as it offers significantly faster installation and build times. You can install it from [bun.sh](https://bun.sh).
+</Note>
+
+## Installation Steps
+
+<Steps>
+  <Step title="Clone the repository">
+    Clone the project repository to your local machine:
+
+    ```bash
+    git clone https://github.com/jorgemacias/portfolio.git
+    cd portfolio
+    ```
+
+    <Tip>
+    Replace the repository URL with the actual GitHub repository URL if different.
+    </Tip>
+  </Step>
+
+  <Step title="Install dependencies">
+    Install the project dependencies using your preferred package manager:
+
+    <CodeGroup>
+      ```bash Bun
+      bun install
+      ```
+
+      ```bash npm
+      npm install
+      ```
+
+      ```bash pnpm
+      pnpm install
+      ```
+    </CodeGroup>
+
+    This will install all required dependencies including:
+    - Astro and its integrations
+    - React and React DOM
+    - Tailwind CSS
+    - TypeScript types
+    - Optimization tools
+  </Step>
+
+  <Step title="Start the development server">
+    Run the development server:
+
+    <CodeGroup>
+      ```bash Bun
+      bun dev
+      ```
+
+      ```bash npm
+      npm run dev
+      ```
+
+      ```bash pnpm
+      pnpm dev
+      ```
+    </CodeGroup>
+
+    The development server will start at `http://localhost:4321`.
+
+    <Note>
+    If you need to access the server from other devices on your network, use the `local` script instead:
+    
+    ```bash
+    bun run local
+    ```
+    
+    This runs `astro dev --host` and makes the server accessible via your local IP address.
+    </Note>
+  </Step>
+
+  <Step title="Verify the installation">
+    Open your browser and navigate to:
+
+    ```
+    http://localhost:4321
+    ```
+
+    You should see the portfolio homepage with sections for About, Skills, Professional Experience, Projects, and Education.
+
+    The site will be in Spanish by default (as configured in `astro.config.mjs`). You can access the English version at:
+
+    ```
+    http://localhost:4321/en
+    ```
+  </Step>
+</Steps>
+
+## Available Scripts
+
+The project includes several npm scripts defined in `package.json`:
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `dev` | `astro dev` | Start development server at `localhost:4321` |
+| `local` | `astro dev --host` | Start dev server accessible on local network |
+| `build` | `astro build` | Build production site to `./dist/` |
+| `preview` | `astro preview` | Preview production build locally |
+| `astro` | `astro` | Run Astro CLI commands |
+
+## Building for Production
+
+To create a production-optimized build:
+
+<CodeGroup>
+  ```bash Bun
+  bun run build
+  ```
+
+  ```bash npm
+  npm run build
+  ```
+
+  ```bash pnpm
+  pnpm build
+  ```
+</CodeGroup>
+
+This will:
+1. Compile all Astro, React, and TypeScript files
+2. Optimize and compress assets
+3. Remove unused CSS with PurgeCSS
+4. Generate a sitemap
+5. Output everything to the `./dist/` directory
+
+To preview the production build locally:
+
+<CodeGroup>
+  ```bash Bun
+  bun run preview
+  ```
+
+  ```bash npm
+  npm run preview
+  ```
+
+  ```bash pnpm
+  pnpm preview
+  ```
+</CodeGroup>
+
+## Troubleshooting
+
+### Port Already in Use
+
+If port 4321 is already in use, Astro will automatically try the next available port. You can also specify a custom port:
+
+```bash
+bun dev -- --port 3000
+```
+
+### Module Not Found Errors
+
+If you encounter module resolution errors, try:
+
+1. Deleting `node_modules` and reinstalling:
+   ```bash
+   rm -rf node_modules
+   bun install
+   ```
+
+2. Clearing Astro's cache:
+   ```bash
+   rm -rf .astro
+   ```
+
+## Next Steps
+
+Now that you have the project running:
+
+- Explore the [Project Structure](/project-structure) to understand the codebase organization
+- Learn about [Content Configuration](/configuration/content) to add your own projects and experience
+- Read about [Locales](/configuration/locales) to customize text and translations
+- Check out the [Guides](/guides/adding-projects) to start customizing your portfolio

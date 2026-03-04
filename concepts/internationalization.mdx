@@ -1,0 +1,411 @@
+---
+title: Internationalization (i18n)
+description: Complete guide to the bilingual system supporting English and Spanish throughout the portfolio
+---
+
+## Overview
+
+The portfolio implements a robust internationalization system that supports both English and Spanish languages. The system is built on Astro's native i18n capabilities combined with a custom translation helper.
+
+## Astro i18n Configuration
+
+The i18n system is configured in `astro.config.mjs`:
+
+```javascript astro.config.mjs
+export default defineConfig({
+  // ... other config
+  i18n: {
+    defaultLocale: "es",
+    locales: ["en", "es"],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
+});
+```
+
+<Info>
+  **Default Locale**: Spanish (`es`) is the default language. The default locale doesn't require a URL prefix (e.g., `/` for Spanish, `/en` for English).
+</Info>
+
+## Locale File Structure
+
+Translations are stored in JSON files under `src/locales/`:
+
+```
+src/locales/
+├── en.json    # English translations
+└── es.json    # Spanish translations
+```
+
+### Locale File Organization
+
+Both locale files follow the same nested structure:
+
+```json
+{
+  "site": { /* Site metadata */ },
+  "sections": [ /* Navigation sections */ ],
+  "sections_data": { /* Section content */ },
+  "components": { /* Component translations */ }
+}
+```
+
+### Example: Site Metadata
+
+<CodeGroup>
+
+```json en.json
+{
+  "site": {
+    "title": "Jorge Macias | Software Developer",
+    "description": "Software developer specialized in frontend, backend and desktop applications. Explore my projects and portfolio.",
+    "author": "Jorge Antonio Macias Zambrano",
+    "author_shortname": "Jorge Macias"
+  }
+}
+```
+
+```json es.json
+{
+  "site": {
+    "title": "Jorge Macias | Desarrollador de Software",
+    "description": "Desarrollador de software especializado en frontend, backend y aplicaciones de escritorio. Explora mis proyectos y portafolio.",
+    "author": "Jorge Antonio Macias Zambrano",
+    "author_shortname": "Jorge Macias"
+  }
+}
+```
+
+</CodeGroup>
+
+### Example: Navigation Sections
+
+<CodeGroup>
+
+```json en.json
+{
+  "sections": [
+    { "label": "About Me", "url": "about" },
+    { "label": "Skills", "url": "skills" },
+    { "label": "Professional Experience", "url": "experience" },
+    { "label": "Projects", "url": "projects" },
+    { "label": "Education", "url": "education" }
+  ]
+}
+```
+
+```json es.json
+{
+  "sections": [
+    { "label": "Acerca de Mí", "url": "about" },
+    { "label": "Habilidades", "url": "skills" },
+    { "label": "Experiencia Profesional", "url": "experience" },
+    { "label": "Proyectos", "url": "projects" },
+    { "label": "Educación", "url": "education" }
+  ]
+}
+```
+
+</CodeGroup>
+
+<Note>
+  The `url` field remains consistent across languages - only the `label` is translated. This ensures proper routing and section loading.
+</Note>
+
+## Translation System
+
+The translation system is implemented in `src/i18n/index.ts`:
+
+```typescript src/i18n/index.ts
+import english from "@/locales/en.json";
+import spanish from "@/locales/es.json";
+import type {
+  LanguageType,
+  Locale,
+  TranslationKey,
+  TranslationObject,
+  ValueAtKey,
+} from "@/types";
+
+const LANGUAGES: Record<Locale, LanguageType> = {
+  en: english,
+  es: spanish,
+};
+
+export const getTranslation = (locale: Locale): TranslationObject => {
+  const dictionary = LANGUAGES[locale];
+
+  if (!dictionary) {
+    throw new Error(`Locale '${locale}' not found`);
+  }
+
+  const t = <K extends TranslationKey>(key: K): ValueAtKey<LanguageType, K> => {
+    const value = key
+      .split(".")
+      .reduce((acc, part) => acc?.[part], dictionary as any);
+
+    if (value === undefined) {
+      throw new Error(`Missing translation key: ${key}`);
+    }
+
+    return value;
+  };
+
+  return {
+    locale,
+    dictionary,
+    t,
+  };
+};
+```
+
+### How getTranslation() Works
+
+<Steps>
+  <Step title="Locale Dictionary Loading">
+    Loads the appropriate locale dictionary (English or Spanish) based on the provided locale.
+  </Step>
+  
+  <Step title="Translation Function Creation">
+    Creates a type-safe `t()` function that accepts dot-notation keys.
+  </Step>
+  
+  <Step title="Nested Key Resolution">
+    Splits the key by `.` and traverses the nested object structure to retrieve the value.
+  </Step>
+  
+  <Step title="Error Handling">
+    Throws an error if the locale or translation key is not found, preventing silent failures.
+  </Step>
+</Steps>
+
+## Using Translations in Components
+
+### In Astro Components
+
+```astro
+---
+import { getTranslation } from "@/i18n";
+import type { Locale } from "@/types";
+
+const { currentLocale } = Astro;
+const { t } = getTranslation(currentLocale as Locale);
+
+const siteTitle = t("site.title");
+const sections = t("sections");
+---
+
+<h1>{siteTitle}</h1>
+```
+
+### In React Components
+
+For React components that need translations, pass the locale as a prop:
+
+```tsx src/components/ThemeToggler.tsx
+import { getTranslation } from "@/i18n";
+import type { Locale } from "@/types";
+
+interface Props {
+  lang: Locale;
+}
+
+export const ThemeToggler = ({ lang }: Props) => {
+  const { t } = getTranslation(lang);
+
+  return (
+    <button
+      title={t("components.theme_toggler.title")}
+      aria-label={t("components.theme_toggler.aria-label")}
+    >
+      {/* ... */}
+    </button>
+  );
+};
+```
+
+## Dot Notation Access
+
+The translation system supports nested object access using dot notation:
+
+```typescript
+// Access nested translations
+t("site.title")                           // "Jorge Macias | Software Developer"
+t("components.theme_toggler.title")      // "Button to switch dark/light theme"
+t("sections_data.about.greeting")        // "Hello, I am"
+
+// Access arrays
+t("sections")                             // Array of section objects
+t("sections_data.experiences")           // Array of experience objects
+```
+
+## Component Translation Examples
+
+### Theme Toggler Component
+
+<CodeGroup>
+
+```json en.json
+{
+  "components": {
+    "theme_toggler": {
+      "title": "Button to switch dark/light theme",
+      "aria-label": "Button that changes the portfolio theme between dark/light"
+    }
+  }
+}
+```
+
+```json es.json
+{
+  "components": {
+    "theme_toggler": {
+      "title": "Botón para cambiar de tema oscuro/claro",
+      "aria-label": "Botón que cambia el tema del portafolio entre oscuro/claro"
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+### Header Component
+
+<CodeGroup>
+
+```json en.json
+{
+  "components": {
+    "header": {
+      "title": "Portfolio",
+      "menu_opener_title": "Button to open mobile menu",
+      "home_url": "/",
+      "languageUrl": "/",
+      "languageCaption": "ES",
+      "flagUrl": "/mexico.svg"
+    }
+  }
+}
+```
+
+```json es.json
+{
+  "components": {
+    "header": {
+      "title": "Portafolio",
+      "menu_opener_title": "Botón para abrir menú móvil",
+      "home_url": "/",
+      "languageUrl": "/en",
+      "languageCaption": "EN",
+      "flagUrl": "/usa.svg"
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+<Tip>
+  Notice how `languageUrl` points to the opposite language: from Spanish (`/`) to English (`/en`), and vice versa.
+</Tip>
+
+## Adding a New Language
+
+To add support for a new language (e.g., French):
+
+<Steps>
+  <Step title="Create Locale File">
+    Create a new locale file at `src/locales/fr.json` with the same structure as `en.json` and `es.json`.
+  </Step>
+  
+  <Step title="Update Astro Config">
+    Add the new locale to `astro.config.mjs`:
+    ```javascript
+    i18n: {
+      defaultLocale: "es",
+      locales: ["en", "es", "fr"],
+      routing: {
+        prefixDefaultLocale: false,
+      },
+    }
+    ```
+  </Step>
+  
+  <Step title="Update Language Registry">
+    Import and register the new locale in `src/i18n/index.ts`:
+    ```typescript
+    import french from "@/locales/fr.json";
+    
+    const LANGUAGES: Record<Locale, LanguageType> = {
+      en: english,
+      es: spanish,
+      fr: french,
+    };
+    ```
+  </Step>
+  
+  <Step title="Update TypeScript Types">
+    Add the new locale to the `Locale` type definition in `src/types/index.ts`:
+    ```typescript
+    export type Locale = "en" | "es" | "fr";
+    ```
+  </Step>
+</Steps>
+
+## Translation Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Consistent Structure" icon="sitemap">
+    Maintain identical JSON structure across all locale files to prevent missing translation errors.
+  </Card>
+  
+  <Card title="Semantic Keys" icon="key">
+    Use descriptive, hierarchical keys that reflect the content's purpose and location.
+  </Card>
+  
+  <Card title="Type Safety" icon="shield-check">
+    Leverage TypeScript's type checking to catch translation key errors at compile time.
+  </Card>
+  
+  <Card title="Error Handling" icon="triangle-alert">
+    The system throws explicit errors for missing keys, making debugging easier.
+  </Card>
+</CardGroup>
+
+<Warning>
+  Always ensure that all locale files have the same keys. A missing key will throw a runtime error when accessed.
+</Warning>
+
+## Complex Data Structures
+
+The locale files can contain complex nested data, including arrays of objects:
+
+```json
+{
+  "sections_data": {
+    "experiences": [
+      {
+        "role": "Full Stack Developer",
+        "company": "SMCI",
+        "period": "December 2024 – February 2025",
+        "responsibilities": [
+          "Participation in the development of a software solution...",
+          "Development of a REST API..."
+        ],
+        "technologies": [
+          { "name": "REST API", "icon": { "name": "server" } },
+          { "name": "React", "icon": { "name": "react" } }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Access this data using:
+
+```typescript
+const experiences = t("sections_data.experiences");
+// Returns the full array of experience objects
+```

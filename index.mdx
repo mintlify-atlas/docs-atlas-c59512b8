@@ -1,97 +1,244 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: Jorge Macias Portfolio Documentation
+description: Learn how to build and customize a modern portfolio website with Astro, React, and Tailwind CSS
+mode: custom
 ---
 
-## Setting up
+<div className="relative bg-gradient-to-br from-[#FF5C00] via-[#FF8333] to-[#7A3600] dark:from-[#7A3600] dark:via-[#5A2600] dark:to-[#3A1500] py-20">
+  <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div className="lg:col-span-7">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
+          Jorge Macias Portfolio Documentation
+        </h1>
+        <p className="text-lg sm:text-xl text-white/90 max-w-2xl mb-8">
+          Build a modern, multilingual portfolio website with Astro, React, and Tailwind CSS. This documentation covers everything from setup to deployment.
+        </p>
+        <div className="flex flex-wrap gap-4">
+          <a
+            href="/installation"
+            className="inline-flex items-center px-6 py-3 rounded-lg bg-white text-[#FF5C00] font-semibold hover:bg-gray-100 transition-colors no-underline"
+          >
+            Get Started
+          </a>
+          <a
+            href="/components/overview"
+            className="inline-flex items-center px-6 py-3 rounded-lg border border-white/30 bg-white/10 text-white font-semibold hover:bg-white/20 transition-colors no-underline"
+          >
+            Explore Components
+          </a>
+        </div>
+      </div>
+      <div className="lg:col-span-5 hidden lg:block">
+        <div className="relative">
+          <div className="absolute inset-0 bg-white/10 rounded-2xl blur-3xl"></div>
+          <div className="relative bg-white/5 backdrop-blur-sm border border-white/20 rounded-2xl p-8">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-white/80"></div>
+                <div className="h-4 bg-white/60 rounded w-32"></div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-white/60"></div>
+                <div className="h-4 bg-white/40 rounded w-24"></div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-white/40"></div>
+                <div className="h-4 bg-white/30 rounded w-28"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-Get your documentation site up and running in minutes.
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+    Quick Start
+  </h2>
+  <p className="text-base text-gray-600 dark:text-gray-400 mb-8">
+    Get your portfolio up and running in minutes
+  </p>
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+  <Steps>
+    <Step title="Clone and Install">
+      Clone the repository and install dependencies:
+      
+      ```bash
+      git clone https://github.com/Jorgemacias-12/Portfolio.git
+      cd Portfolio
+      bun install
+      ```
+    </Step>
+    
+    <Step title="Configure Your Content">
+      Update the locale files in `src/locales/` with your personal information:
+      
+      ```json
+      {
+        "site": {
+          "title": "Your Name | Software Developer",
+          "description": "Your professional description"
+        },
+        "sections_data": {
+          "about": {
+            "greeting": "Hello, I am",
+            "short_name": "Your Name",
+            "position": "Your Position"
+          }
+        }
+      }
+      ```
+    </Step>
+    
+    <Step title="Start Development Server">
+      Run the development server to preview your portfolio:
+      
+      ```bash
+      bun dev
+      ```
+      
+      <Note>
+        The site will be available at `http://localhost:4321`
+      </Note>
+    </Step>
+    
+    <Step title="Build and Deploy">
+      Build your portfolio for production:
+      
+      ```bash
+      bun build
+      ```
+      
+      The optimized site will be in the `dist/` directory, ready for deployment.
+    </Step>
+  </Steps>
+</div>
 
-## Make it yours
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+    Key Features
+  </h2>
+  <p className="text-base text-gray-600 dark:text-gray-400 mb-8">
+    Everything you need to build a professional portfolio
+  </p>
 
-Design a docs site that looks great and empowers your users.
+  <CardGroup cols={2}>
+    <Card title="Multilingual Support" icon="globe" href="/concepts/internationalization">
+      Built-in English and Spanish support with easy locale management
+    </Card>
+    <Card title="Dark Mode" icon="moon" href="/concepts/theming">
+      Seamless dark/light theme switching with persistent user preferences
+    </Card>
+    <Card title="Component Architecture" icon="cube" href="/components/overview">
+      Modular, reusable Astro and React components for rapid development
+    </Card>
+    <Card title="Responsive Design" icon="mobile" href="/configuration/styling">
+      Mobile-first design with Tailwind CSS for perfect display on any device
+    </Card>
+    <Card title="Project Showcase" icon="folder-open" href="/guides/adding-projects">
+      Display your projects with image galleries and detailed descriptions
+    </Card>
+    <Card title="SEO Optimized" icon="chart-line" href="/guides/deployment">
+      Built-in sitemap, compression, and performance optimizations
+    </Card>
+  </CardGroup>
+</div>
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+    Explore by Topic
+  </h2>
+  <p className="text-base text-gray-600 dark:text-gray-400 mb-8">
+    Deep dive into specific areas of the portfolio
+  </p>
 
-## Create beautiful pages
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <a href="/concepts/architecture" className="group block rounded-2xl border border-gray-200 dark:border-[#27272a] hover:border-[#FF5C00] dark:hover:border-[#FF5C00] overflow-hidden transition-colors no-underline">
+      <div className="p-6">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-[#FF5C00] transition-colors">
+          Architecture Overview
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+          Understand how the portfolio is structured and how components work together
+        </p>
+        <div className="flex items-center text-sm text-[#FF5C00] font-medium">
+          Learn more
+          <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </a>
 
-Everything you need to create world-class documentation.
+    <a href="/configuration/content" className="group block rounded-2xl border border-gray-200 dark:border-[#27272a] hover:border-[#FF5C00] dark:hover:border-[#FF5C00] overflow-hidden transition-colors no-underline">
+      <div className="p-6">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-[#FF5C00] transition-colors">
+          Content Configuration
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+          Learn how to manage your projects, experience, education, and skills
+        </p>
+        <div className="flex items-center text-sm text-[#FF5C00] font-medium">
+          Learn more
+          <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </a>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+    <a href="/components/sections" className="group block rounded-2xl border border-gray-200 dark:border-[#27272a] hover:border-[#FF5C00] dark:hover:border-[#FF5C00] overflow-hidden transition-colors no-underline">
+      <div className="p-6">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-[#FF5C00] transition-colors">
+          Section Components
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+          Explore the About, Skills, Experience, Projects, and Education sections
+        </p>
+        <div className="flex items-center text-sm text-[#FF5C00] font-medium">
+          Learn more
+          <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </a>
 
-## Need inspiration?
+    <a href="/guides/customizing-theme" className="group block rounded-2xl border border-gray-200 dark:border-[#27272a] hover:border-[#FF5C00] dark:hover:border-[#FF5C00] overflow-hidden transition-colors no-underline">
+      <div className="p-6">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-[#FF5C00] transition-colors">
+          Theme Customization
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+          Customize colors, fonts, and styling to match your personal brand
+        </p>
+        <div className="flex items-center text-sm text-[#FF5C00] font-medium">
+          Learn more
+          <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <div className="rounded-2xl bg-gradient-to-r from-[#FF5C00] to-[#FF8333] dark:from-[#7A3600] dark:to-[#5A2600] p-8 md:p-12">
+    <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-4">
+      Ready to Build Your Portfolio?
+    </h2>
+    <p className="text-lg text-white/90 mb-6 max-w-2xl">
+      Follow the installation guide to set up your portfolio in minutes and start showcasing your work.
+    </p>
+    <a
+      href="/installation"
+      className="inline-flex items-center px-6 py-3 rounded-lg bg-white text-[#FF5C00] font-semibold hover:bg-gray-100 transition-colors no-underline"
+    >
+      Get Started Now
+    </a>
+  </div>
+</div>

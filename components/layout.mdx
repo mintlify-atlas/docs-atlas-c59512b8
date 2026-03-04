@@ -1,0 +1,327 @@
+---
+title: Layout Components
+description: Core layout components that structure the portfolio pages
+---
+
+## Layout.astro
+
+The main layout wrapper that provides the HTML structure, meta tags, and global styles for all pages.
+
+### Structure
+
+```astro
+---
+import { getTranslation } from "@/i18n";
+import type { Locale } from "@/types";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+
+const { t } = getTranslation(Astro.currentLocale as Locale);
+---
+
+<!doctype html>
+<html class="scroll-smooth" lang={Astro.currentLocale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{t("site.title")}</title>
+    <!-- Meta tags, OG tags, schema.org -->
+  </head>
+  <body class="bg-white dark:bg-dark-800 text-black dark:text-white">
+    <Header />
+    <slot />
+    <Footer />
+  </body>
+</html>
+```
+
+### Features
+
+- **SEO Optimization** - Meta tags, Open Graph, canonical URLs
+- **Dark Mode Support** - Initializes theme from localStorage
+- **Internationalization** - Sets locale and alternate language tags
+- **Schema.org Data** - Structured data for search engines
+- **Smooth Scrolling** - Enabled via `scroll-smooth` class
+
+### Usage
+
+```astro
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout>
+  <main>
+    <!-- Your page content -->
+  </main>
+</Layout>
+```
+
+<Note>
+The Layout component automatically includes Header and Footer. You only need to provide the main content via the slot.
+</Note>
+
+---
+
+## Header.astro
+
+Sticky navigation header with responsive menu, language switcher, and theme toggle.
+
+### Props
+
+No props - uses `Astro.currentLocale` automatically.
+
+### Features
+
+#### Desktop Navigation
+
+- Logo/brand link
+- Horizontal menu with smooth scroll links
+- Language switcher with flag icons
+- Theme toggle button
+
+#### Mobile Navigation
+
+- Hamburger menu button
+- Slide-in drawer with touch gestures
+- Swipe from left edge to open
+- Swipe left to close
+- Tap outside to close
+
+#### Sticky Behavior
+
+The header transforms when scrolling:
+
+```javascript
+// Applies glassmorphism effect on scroll
+const glassClasses = [
+  "fixed",
+  "backdrop-blur-md",
+  "bg-white/80",
+  "dark:bg-dark-800/80",
+];
+```
+
+### Code Example
+
+```astro
+<header
+  id="header"
+  class="sticky z-50 backdrop-blur-sm top-0 border-b dark:border-dark-700"
+>
+  <!-- Desktop Navigation -->
+  <nav class="p-4 max-w-6xl mx-auto hidden md:flex justify-between">
+    <a href="/">{t("site.author_shortname")}</a>
+    
+    <ul class="flex items-center gap-4">
+      {sections.map((el) => <Link isForMenu {...el} />)}
+    </ul>
+    
+    <section class="flex items-center gap-4">
+      <a href={languageUrl}>
+        <img src={flagUrl} alt="Language switch" />
+      </a>
+      <ThemeToggler lang={currentLocale} client:only="react" />
+    </section>
+  </nav>
+  
+  <!-- Mobile menu implementation -->
+</header>
+```
+
+### Mobile Menu Gestures
+
+<ParamField path="SWIPE_MIN_DISTANCE" type="number" default="80">
+  Minimum swipe distance in pixels to trigger menu open/close
+</ParamField>
+
+<ParamField path="EDGE_ZONE_WIDTH" type="number" default="50">
+  Width of the left edge zone where swipe-to-open is enabled
+</ParamField>
+
+<ParamField path="MENU_ANIMATION_TIME" type="number" default="300">
+  Duration of menu slide animation in milliseconds
+</ParamField>
+
+---
+
+## Footer.astro
+
+Site footer with contact information, social links, and copyright notice.
+
+### Structure
+
+```astro
+<footer class="relative mt-32 pt-24 pb-12 border-t">
+  <section class="max-w-6xl mx-auto px-6">
+    <div class="grid md:grid-cols-2 gap-16 mb-16">
+      <!-- Contact Section -->
+      <div>
+        <h2>{t("components.footer.contact_me_caption")}</h2>
+        <a id="email-link">
+          <Mail />
+          <span>{email}</span>
+        </a>
+      </div>
+      
+      <!-- Social Links -->
+      <div>
+        <h3>{t("components.footer.follow_me_caption")}</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {socialNetworks.map((s) => <SocialLink {...s} />)}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Copyright and Version -->
+    <div class="flex justify-between">
+      <p>&copy; {new Date().getFullYear()}</p>
+      <p>Version: {import.meta.env.PUBLIC_VERSION}</p>
+    </div>
+  </section>
+</footer>
+```
+
+### Email Protection
+
+The footer uses JavaScript to delay email address rendering, preventing bots:
+
+```javascript
+setTimeout(() => {
+  const emailEl = document.getElementById("email-link");
+  const textEl = document.getElementById("text-content");
+  emailEl.setAttribute("href", `mailto:${email}`);
+  textEl.textContent = email;
+}, 2000);
+```
+
+### Social Links
+
+Displays social network links from `socialNetworks` constant:
+
+```typescript
+// Each social link includes:
+interface SocialNetwork {
+  icon: Icon;
+  label: string;
+  url: string;
+}
+```
+
+---
+
+## Section.astro
+
+Reusable section wrapper component with consistent styling and variants.
+
+### Props
+
+<ParamField path="title" type="string" required>
+  Section title text
+</ParamField>
+
+<ParamField path="id" type="string">
+  HTML id for anchor links and navigation
+</ParamField>
+
+<ParamField path="variant" type="'hero' | 'normal'" default="normal">
+  Visual variant - hero for full-height sections, normal for content sections
+</ParamField>
+
+<ParamField path="scrollOffset" type="boolean" default="false">
+  Adds scroll margin to account for sticky header
+</ParamField>
+
+<ParamField path="optionalTitle" type="boolean" default="false">
+  Whether to render the title element
+</ParamField>
+
+<ParamField path="class" type="string">
+  Additional CSS classes for the section
+</ParamField>
+
+<ParamField path="titleClass" type="string">
+  Additional CSS classes for the title
+</ParamField>
+
+<ParamField path="contentClass" type="string">
+  Additional CSS classes for the content area
+</ParamField>
+
+### Variants
+
+#### Hero Variant
+
+```astro
+<Section 
+  title="Welcome" 
+  variant="hero" 
+  id="about"
+  optionalTitle
+  scrollOffset
+>
+  <!-- Full-height centered content -->
+</Section>
+```
+
+Produces:
+- `min-h-[80vh]` or `min-h-[100vh]` height
+- Centered content
+- Large title (text-4xl to text-6xl)
+- `text-center` alignment
+
+#### Normal Variant
+
+```astro
+<Section 
+  title="My Projects" 
+  id="projects"
+  optionalTitle
+  scrollOffset
+>
+  <!-- Standard content section -->
+</Section>
+```
+
+Produces:
+- `max-w-6xl` container
+- Standard padding
+- Medium title (text-2xl to text-3xl)
+- Left-aligned content
+
+### Usage Example
+
+```astro
+---
+import Section from "@/components/Section.astro";
+---
+
+<Section 
+  title="Experience"
+  id="experience"
+  optionalTitle
+  scrollOffset
+  class="bg-gray-50 dark:bg-dark-900"
+>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Experience cards -->
+  </div>
+</Section>
+```
+
+<Tip>
+Use `scrollOffset={true}` on sections that are navigation targets to ensure they don't get hidden under the sticky header.
+</Tip>
+
+---
+
+## Related Components
+
+<CardGroup cols={2}>
+  <Card title="Section Components" icon="grid" href="/components/sections">
+    See how sections use these layout components
+  </Card>
+  <Card title="UI Elements" icon="box" href="/components/ui-elements">
+    Explore UI components used within layouts
+  </Card>
+</CardGroup>

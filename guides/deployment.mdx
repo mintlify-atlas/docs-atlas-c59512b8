@@ -1,0 +1,333 @@
+---
+title: Deployment Guide
+description: Learn how to build and deploy your Jorge Macias portfolio
+---
+
+This guide covers how to build and deploy your Jorge Macias portfolio to various hosting platforms.
+
+## Build Configuration
+
+The portfolio is built using Astro with the following configuration:
+
+### Build Command
+
+The build command is defined in `package.json`:
+
+```json
+{
+  "scripts": {
+    "build": "astro build"
+  }
+}
+```
+
+Run the build with:
+
+```bash
+bun build
+```
+
+Or with npm:
+
+```bash
+npm run build
+```
+
+### Output Directory
+
+The built site is output to the `dist/` directory. This folder contains:
+- Static HTML files
+- Optimized CSS and JavaScript
+- Images and other assets
+- Sitemap and robots.txt
+
+### Site Configuration
+
+In `astro.config.mjs`, the site URL is configured:
+
+```javascript
+export default defineConfig({
+  site: "https://jorgemacias.dev",
+  base: process.env.PUBLIC_BASE_URL || "",
+  // ... other config
+});
+```
+
+<Warning>
+  Update the `site` URL to your own domain before deploying to production. This affects sitemap generation and canonical URLs.
+</Warning>
+
+## Deployment Options
+
+The portfolio can be deployed to various static hosting platforms:
+
+### Netlify
+
+<Steps>
+  <Step title="Connect your repository">
+    1. Sign in to [Netlify](https://netlify.com)
+    2. Click "Add new site" > "Import an existing project"
+    3. Connect your Git provider (GitHub, GitLab, or Bitbucket)
+    4. Select your portfolio repository
+  </Step>
+
+  <Step title="Configure build settings">
+    Set the following build configuration:
+
+    - **Build command:** `bun build` or `npm run build`
+    - **Publish directory:** `dist`
+    - **Node version:** 18 or higher (set in environment variables)
+  </Step>
+
+  <Step title="Set environment variables">
+    In Netlify's dashboard under "Site configuration" > "Environment variables":
+
+    - `NODE_VERSION`: `18` or `20`
+    - `PUBLIC_BASE_URL`: `` (empty for root deployment)
+    - `MAINTENANCE_ENABLED`: `false`
+
+    If deploying to a subdirectory:
+    - `PUBLIC_BASE_URL`: `/subdirectory`
+  </Step>
+
+  <Step title="Deploy">
+    Click "Deploy site". Netlify will automatically build and deploy your site. Future commits to your main branch will trigger automatic deployments.
+  </Step>
+
+  <Step title="Configure custom domain (optional)">
+    In "Domain management", add your custom domain and configure DNS settings according to Netlify's instructions.
+  </Step>
+</Steps>
+
+### Vercel
+
+<Steps>
+  <Step title="Import your project">
+    1. Sign in to [Vercel](https://vercel.com)
+    2. Click "Add New..." > "Project"
+    3. Import your Git repository
+  </Step>
+
+  <Step title="Configure project">
+    Vercel should auto-detect Astro. Verify these settings:
+
+    - **Framework Preset:** Astro
+    - **Build Command:** `bun build` or `npm run build`
+    - **Output Directory:** `dist`
+    - **Install Command:** `bun install` or `npm install`
+  </Step>
+
+  <Step title="Set environment variables">
+    Add environment variables in the project settings:
+
+    - `MAINTENANCE_ENABLED`: `false`
+    - `PUBLIC_BASE_URL`: `` (leave empty unless deploying to subdirectory)
+  </Step>
+
+  <Step title="Deploy">
+    Click "Deploy". Vercel will build and deploy your site automatically. Production deployments happen on every push to your main branch.
+  </Step>
+</Steps>
+
+### GitHub Pages
+
+<Steps>
+  <Step title="Update astro.config.mjs">
+    Set the base path if deploying to a repository page (e.g., `username.github.io/repo-name`):
+
+    ```javascript
+    export default defineConfig({
+      site: "https://username.github.io",
+      base: "/repo-name",  // Remove if deploying to username.github.io
+      // ... rest of config
+    });
+    ```
+  </Step>
+
+  <Step title="Create GitHub Actions workflow">
+    Create `.github/workflows/deploy.yml`:
+
+    ```yaml
+    name: Deploy to GitHub Pages
+
+    on:
+      push:
+        branches: [ main ]
+      workflow_dispatch:
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v4
+          
+          - name: Setup Bun
+            uses: oven-sh/setup-bun@v1
+            with:
+              bun-version: latest
+          
+          - name: Install dependencies
+            run: bun install
+          
+          - name: Build
+            run: bun run build
+          
+          - name: Upload artifact
+            uses: actions/upload-pages-artifact@v3
+            with:
+              path: ./dist
+
+      deploy:
+        environment:
+          name: github-pages
+          url: ${{ steps.deployment.outputs.page_url }}
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+          - name: Deploy to GitHub Pages
+            id: deployment
+            uses: actions/deploy-pages@v4
+    ```
+  </Step>
+
+  <Step title="Enable GitHub Pages">
+    In your repository settings:
+    1. Go to "Settings" > "Pages"
+    2. Under "Source", select "GitHub Actions"
+    3. Save the settings
+  </Step>
+
+  <Step title="Deploy">
+    Push your changes to the main branch. GitHub Actions will automatically build and deploy your site.
+  </Step>
+</Steps>
+
+## Environment Variables
+
+The portfolio supports the following environment variables:
+
+<ParamField path="PUBLIC_BASE_URL" type="string" default="">
+  Base path for the site when deployed to a subdirectory. Leave empty for root deployment.
+  
+  Example: `/portfolio` for `yourdomain.com/portfolio`
+</ParamField>
+
+<ParamField path="MAINTENANCE_ENABLED" type="string" default="false">
+  Enables maintenance mode when set to `"true"`. Shows a maintenance page instead of the regular site.
+</ParamField>
+
+<ParamField path="NODE_VERSION" type="string" default="18">
+  Node.js version to use for building (mainly for hosting platform configuration).
+</ParamField>
+
+## Pre-deployment Checklist
+
+Before deploying to production, ensure you've:
+
+<AccordionGroup>
+  <Accordion title="Update site configuration">
+    - Set correct `site` URL in `astro.config.mjs`
+    - Configure `base` path if needed
+    - Verify locale settings (`defaultLocale` and available `locales`)
+  </Accordion>
+
+  <Accordion title="Update content">
+    - Fill in your projects in `src/locales/en.json` and `es.json`
+    - Add your work experiences
+    - Update personal information (name, title, bio)
+    - Add project images to `public/projects/`
+  </Accordion>
+
+  <Accordion title="Test the build locally">
+    Run these commands to verify everything works:
+
+    ```bash
+    # Build the site
+    bun build
+    
+    # Preview the built site
+    bun preview
+    ```
+
+    Check for:
+    - No build errors
+    - All pages load correctly
+    - Images display properly
+    - Navigation works
+    - Both light and dark modes work
+  </Accordion>
+
+  <Accordion title="Optimize assets">
+    - Compress images (aim for under 500KB per image)
+    - Use WebP format for better compression
+    - Ensure favicon is set correctly
+    - Verify meta tags and SEO information
+  </Accordion>
+</AccordionGroup>
+
+## Post-deployment
+
+After deploying:
+
+1. **Test the live site** - Visit your deployed URL and verify all functionality
+2. **Check mobile responsiveness** - Test on different devices and screen sizes
+3. **Verify SEO** - Use tools like Google Search Console to submit your sitemap
+4. **Monitor performance** - Use Lighthouse or similar tools to check performance scores
+5. **Set up analytics** (optional) - Add Google Analytics or similar tracking
+
+## Continuous Deployment
+
+All three platforms (Netlify, Vercel, GitHub Pages) support continuous deployment:
+
+- **Automatic builds** on every push to your main branch
+- **Preview deployments** for pull requests (Netlify and Vercel)
+- **Rollback capability** to previous deployments
+- **Build logs** for debugging failed deployments
+
+<Tip>
+  Use preview deployments (available on Netlify and Vercel) to test changes before merging to production. Each pull request gets its own preview URL.
+</Tip>
+
+<Tip>
+  Set up a custom domain for a more professional look. All three platforms offer free SSL certificates via Let's Encrypt.
+</Tip>
+
+<Warning>
+  If you change the `base` path in `astro.config.mjs`, you'll need to update all absolute links in your content (like project images and navigation links).
+</Warning>
+
+## Troubleshooting
+
+### Build fails with "command not found: bun"
+
+If your hosting platform doesn't support Bun, change the build command to use npm:
+
+```bash
+npm install && npm run build
+```
+
+### Images not loading
+
+Ensure image paths in your locale files start with `/` and match the structure in your `public/` directory:
+
+```json
+{
+  "url": "/projects/myproject-1.png",  // Correct
+  "url": "projects/myproject-1.png",   // Wrong
+  "url": "./projects/myproject-1.png"  // Wrong
+}
+```
+
+### 404 errors on page refresh
+
+Astro generates static pages, so this shouldn't happen. If it does, check your hosting platform's routing configuration and ensure it's set up for static sites.
+
+### Build is slow
+
+The portfolio includes several optimization plugins (compress, purgecss) that can slow builds. For faster development builds, you can temporarily disable them in `astro.config.mjs`.

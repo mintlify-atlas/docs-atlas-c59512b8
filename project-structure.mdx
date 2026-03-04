@@ -1,0 +1,322 @@
+---
+title: Project Structure
+description: Understanding the directory structure and file organization of the portfolio project
+---
+
+## Directory Overview
+
+The project follows Astro's recommended structure with additional organization for multilingual content and reusable components:
+
+```text
+/
+├── public/              # Static assets served directly
+├── src/                 # Source code
+│   ├── components/      # Reusable UI components
+│   ├── sections/        # Page section components
+│   ├── layouts/         # Page layout templates
+│   ├── pages/           # File-based routing
+│   │   ├── index.astro  # Homepage (Spanish)
+│   │   └── en/          # English pages
+│   ├── locales/         # Translation files
+│   ├── i18n/            # Internationalization utilities
+│   ├── config/          # Application configuration
+│   ├── data/            # Static data files
+│   ├── types/           # TypeScript type definitions
+│   ├── utils/           # Utility functions
+│   └── constants/       # Application constants
+├── astro.config.mjs     # Astro configuration
+├── tailwind.config.mjs  # Tailwind CSS configuration
+├── tsconfig.json        # TypeScript configuration
+└── package.json         # Project dependencies and scripts
+```
+
+## Key Directories
+
+### `src/components/`
+
+Reusable UI components used throughout the site. These are the building blocks of the portfolio:
+
+- `Section.astro` - Wrapper component for page sections
+- `Header.astro` - Site navigation header
+- `Footer.astro` - Site footer with contact information
+- Theme toggles, buttons, badges, and other UI elements
+
+### `src/sections/`
+
+Larger section components that represent main content areas. Each section is dynamically loaded based on the configuration:
+
+- `About.astro` - Introduction and profile section
+- `Skills.astro` - Technical skills showcase
+- `Experiences.astro` - Professional work experience
+- `Projects.astro` - Portfolio projects with galleries
+- `Schools.astro` - Education history
+
+These sections are registered in `src/config/index.ts`:
+
+```typescript
+export const SECTION_COMPONENTS: Record<
+  string,
+  () => Promise<{ default: AstroComponent }>
+> = {
+  skills: () => import("@/sections/Skills.astro"),
+  about: () => import("@/sections/About.astro"),
+  experience: () => import("@/sections/Experiences.astro"),
+  projects: () => import("@/sections/Projects.astro"),
+  education: () => import("@/sections/Schools.astro"),
+};
+```
+
+### `src/pages/`
+
+Astro's file-based routing system. Each `.astro` or `.md` file in this directory becomes a page:
+
+- `index.astro` - Homepage (Spanish, default locale)
+- `en/index.astro` - English homepage
+
+The homepage dynamically renders sections based on the locale configuration:
+
+```astro title="src/pages/index.astro"
+---
+const { currentLocale } = Astro;
+const { t } = getTranslation(currentLocale as Locale);
+const sections = t("sections");
+---
+
+<Layout>
+  <main>
+    {sections.map(async ({ label, url }) => {
+      const loader = SECTION_COMPONENTS[url];
+      const Component = (await loader()).default;
+      return (
+        <Section id={url} title={label}>
+          <Component />
+        </Section>
+      );
+    })}
+  </main>
+</Layout>
+```
+
+### `src/locales/`
+
+Translation files for internationalization:
+
+- `en.json` - English translations
+- `es.json` - Spanish translations
+
+Each file contains structured data for:
+- Site metadata (title, description, keywords)
+- Section labels and content
+- Component text (headers, footers, buttons)
+- Professional experience and projects
+- Education information
+
+Example structure:
+
+```json title="src/locales/en.json"
+{
+  "site": {
+    "title": "Jorge Macias | Software Developer",
+    "description": "Software developer specialized in frontend..."
+  },
+  "sections": [
+    { "label": "About Me", "url": "about" },
+    { "label": "Skills", "url": "skills" }
+  ],
+  "sections_data": {
+    "about": { ... },
+    "skills": { ... }
+  }
+}
+```
+
+### `src/layouts/`
+
+Page layout templates that wrap page content:
+
+- `Layout.astro` - Main layout with head tags, navigation, and footer
+
+Layouts handle common elements like:
+- HTML head with metadata
+- Theme initialization
+- Header navigation
+- Footer
+- Global styles
+
+### `src/config/`
+
+Application configuration files:
+
+- `index.ts` - Main configuration including section component mappings and constants
+
+Example:
+
+```typescript title="src/config/index.ts"
+export const ICON_SIZE_IN_PX = 20;
+
+export const SECTION_COMPONENTS: Record<
+  string,
+  () => Promise<{ default: AstroComponent }>
+> = {
+  // Section mappings
+};
+```
+
+### `public/`
+
+Static assets served directly without processing:
+
+- `favicon.svg`, `favicon.png`, `favicon.ico` - Site icons
+- `avatar.png` - Profile image
+- `og-image.jpg` - Open Graph social media preview image
+- `mexico.svg`, `usa.svg` - Language flag icons
+- `projects/` - Project screenshot images
+- `devicon.min.css` - Technology icon library
+- `robots.txt` - Search engine crawler instructions
+
+<Note>
+Files in `public/` are served at the root path. For example, `public/avatar.png` is accessible at `/avatar.png`.
+</Note>
+
+## Key Configuration Files
+
+### `astro.config.mjs`
+
+Main Astro configuration file:
+
+```js title="astro.config.mjs"
+export default defineConfig({
+  integrations: [
+    tailwind(),
+    maintenance({
+      enabled: process.env.MAINTENANCE_ENABLED === "true",
+    }),
+    react(),
+    sitemap({}),
+    compress(),
+    purgecss()
+  ],
+  site: "https://jorgemacias.dev",
+  base: process.env.PUBLIC_BASE_URL || "",
+  i18n: {
+    defaultLocale: "es",
+    locales: ["en", "es"],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
+});
+```
+
+Key configurations:
+- **Integrations**: Tailwind, React, sitemap generation, compression, CSS purging
+- **Site URL**: Used for sitemap and canonical URLs
+- **i18n**: Multilingual support with Spanish as default
+- **Maintenance Mode**: Toggle via environment variable
+
+### `tailwind.config.mjs`
+
+Tailwind CSS configuration with custom color palettes:
+
+```js title="tailwind.config.mjs"
+export default {
+  content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        dark: { /* Custom dark theme colors */ },
+        accent: { /* Brand accent colors */ },
+      },
+    },
+  },
+  plugins: [],
+};
+```
+
+Features:
+- Dark mode via class strategy
+- Custom color palettes for dark theme
+- Accent colors for brand consistency
+- Safelist for dynamic color classes
+
+### `package.json`
+
+Project metadata and dependencies:
+
+```json title="package.json"
+{
+  "name": "jamz-portfolio",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "local": "astro dev --host",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.16.4",
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/tailwind": "^6.0.2",
+    "react": "^19.2.1",
+    "tailwindcss": "^3.4.18"
+  }
+}
+```
+
+## How Routing Works
+
+Astro uses file-based routing:
+
+1. **Default Locale (Spanish)**: Files in `src/pages/` are served at the root
+   - `src/pages/index.astro` → `/`
+
+2. **Other Locales (English)**: Files in locale subdirectories are prefixed
+   - `src/pages/en/index.astro` → `/en`
+
+3. **Locale Detection**: Configured in `astro.config.mjs`:
+   ```js
+   i18n: {
+     defaultLocale: "es",
+     locales: ["en", "es"],
+     routing: {
+       prefixDefaultLocale: false, // Spanish has no prefix
+     },
+   }
+   ```
+
+4. **Dynamic Sections**: The homepage dynamically loads sections based on locale:
+   ```astro
+   const sections = t("sections"); // From locale files
+   sections.map(({ label, url }) => {
+     const Component = SECTION_COMPONENTS[url];
+     // Render section
+   });
+   ```
+
+## Where to Add Content
+
+Depending on what you want to add:
+
+| Content Type | Location | Notes |
+|--------------|----------|-------|
+| **New Section** | `src/sections/` | Create component, register in `src/config/index.ts` |
+| **Translation** | `src/locales/` | Add to `en.json` and `es.json` |
+| **Component** | `src/components/` | Reusable UI elements |
+| **Static Asset** | `public/` | Images, fonts, icons |
+| **Project Images** | `public/projects/` | Reference in locale files |
+| **Utility Function** | `src/utils/` | Helper functions |
+| **Type Definition** | `src/types/` | TypeScript types |
+| **Configuration** | `src/config/` | App-wide settings |
+
+<Tip>
+When adding new content, always update both language files (`en.json` and `es.json`) to maintain consistency across locales.
+</Tip>
+
+## Next Steps
+
+- Learn about [Content Configuration](/configuration/content) to add your own projects and experience
+- Explore [Locales Configuration](/configuration/locales) for translations
+- Understand [Styling Configuration](/configuration/styling) to customize the theme
+- Check out the [Component Documentation](/components/overview) to learn about available components

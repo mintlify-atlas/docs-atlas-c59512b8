@@ -1,0 +1,97 @@
+---
+title: Introduction
+description: Overview of Jorge Macias' portfolio project - a modern, multilingual developer portfolio built with Astro
+---
+
+## What is this project?
+
+This is a modern, fully-featured developer portfolio website for Jorge Macias, a fullstack software engineer. Built with cutting-edge web technologies, it serves as both a professional showcase and a demonstration of technical capabilities.
+
+The portfolio presents professional experience, projects, skills, and education in an engaging and accessible format, with support for multiple languages and a seamless dark mode experience.
+
+## Key Features
+
+### Multilingual Support
+Built-in internationalization (i18n) with English and Spanish support. The site uses Astro's native i18n capabilities to provide a localized experience:
+
+```js
+i18n: {
+  defaultLocale: "es",
+  locales: ["en", "es"],
+  routing: {
+    prefixDefaultLocale: false,
+  },
+}
+```
+
+### Dark Mode
+Full dark mode support with custom color palettes and theme persistence. The implementation uses Tailwind CSS with a custom `dark` color scheme:
+
+```js
+darkMode: "class"
+```
+
+### Responsive Design
+Mobile-first responsive design that works seamlessly across all devices, from smartphones to desktop displays.
+
+### Component-Based Architecture
+Modular, reusable components that make the codebase maintainable and scalable. Sections are dynamically loaded based on configuration:
+
+```typescript
+export const SECTION_COMPONENTS: Record<
+  string,
+  () => Promise<{ default: AstroComponent }>
+> = {
+  skills: () => import("@/sections/Skills.astro"),
+  about: () => import("@/sections/About.astro"),
+  experience: () => import("@/sections/Experiences.astro"),
+  projects: () => import("@/sections/Projects.astro"),
+  education: () => import("@/sections/Schools.astro"),
+};
+```
+
+### Project Showcase
+Dedicated sections for professional experience, personal projects, skills, and education with rich media support including image galleries and detailed descriptions.
+
+### SEO Optimized
+Built-in sitemap generation, structured metadata, and performance optimization with compression and PurgeCSS:
+
+```js
+integrations: [
+  sitemap({}), 
+  compress(), 
+  purgecss()
+]
+```
+
+## Technology Stack
+
+### Core Framework
+- **Astro 5.16.4** - Modern static site generator with component islands architecture
+- **React 19.2.1** - For interactive components
+- **TypeScript** - Type-safe development
+
+### Styling
+- **Tailwind CSS 3.4.18** - Utility-first CSS framework
+- **Custom Design System** - With dark, accent, and gray color palettes
+- **Inter Variable Font** - For consistent, professional typography
+
+### Tooling & Optimization
+- **Bun** - Fast JavaScript runtime and package manager
+- **astro-compress** - Asset compression
+- **astro-purgecss** - Unused CSS removal
+- **astro-sitemap** - Automatic sitemap generation
+- **Lucide Icons** - Modern icon library
+
+## Who is this for?
+
+This portfolio is designed for:
+
+- **Recruiters and Hiring Managers** - To evaluate Jorge's skills, experience, and project work
+- **Potential Clients** - To understand capabilities and previous work
+- **Fellow Developers** - As inspiration or reference for building similar portfolios
+- **Anyone interested** - In modern web development practices and Astro framework usage
+
+## What's Next?
+
+Ready to get started? Check out the [Installation Guide](/installation) to set up your development environment, or explore the [Project Structure](/project-structure) to understand how the codebase is organized.

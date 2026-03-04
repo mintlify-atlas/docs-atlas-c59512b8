@@ -1,0 +1,185 @@
+---
+title: Adding Projects
+description: Learn how to add new projects to your portfolio
+---
+
+This guide will walk you through adding new projects to your Jorge Macias portfolio. Projects are defined in the locale file and displayed on the portfolio's Projects section.
+
+## Project Data Structure
+
+Projects are stored in the `src/locales/en.json` file (and `es.json` for Spanish) under `sections_data.projects` as an array of project objects.
+
+### Required Fields
+
+Each project requires the following fields:
+
+<ParamField path="name" type="string" required>
+  The project name displayed as the title
+</ParamField>
+
+<ParamField path="description" type="string" required>
+  A brief description of what the project does
+</ParamField>
+
+<ParamField path="status" type="string" required>
+  Current project status. Valid values:
+  - `"active"` - Project in active development
+  - `"maintenance"` - Stable project receiving minor improvements
+  - `"completed"` - Finished project with no active development
+  - `"paused"` - Project temporarily stopped
+  - `"planned"` - Project defined, not yet started
+  - `"in_evaluation"` - Idea or project under feasibility analysis
+</ParamField>
+
+<ParamField path="context" type="object" required>
+  Detailed project context with the following subfields:
+  - `problem` - The problem the project solves
+  - `role` - Your role in the project
+  - `approach` - Technical approach taken
+  - `challenges` - Array of challenges faced
+  - `learnings` - Array of key learnings from the project
+</ParamField>
+
+<ParamField path="tags" type="array" required>
+  Array of technology/category tags. Each tag has:
+  - `name` - Tag display name
+  - `icon` - Icon object with `name` and optional `isLucideIcon` boolean
+  - `color` - Color name (e.g., "blue", "green", "orange")
+  - `type` - Optional, typically "pill"
+</ParamField>
+
+<ParamField path="images" type="array" required>
+  Array of project images. Each image has:
+  - `url` - Path to image file (e.g., "/projects/image-name.png")
+  - `description` - Alt text and caption for the image
+</ParamField>
+
+<ParamField path="repo_link" type="object" required>
+  Link to the project repository:
+  - `label` - Link text (e.g., "GitHub Repository")
+  - `url` - Full URL to repository
+  - `icon` - Icon object with `name` property
+</ParamField>
+
+## Real Project Example
+
+Here's a complete example from the portfolio - the NBTMap Explorer project:
+
+```json
+{
+  "name": "NBTMap Explorer",
+  "description": "Desktop application developed in C# to explore, visualize and export Minecraft item maps (map_*.dat) from NBT files, without needing to run Minecraft or use mods.",
+  "status": "active",
+  "context": {
+    "problem": "Minecraft item maps are stored in NBT files that are not easily readable or viewable outside the game, making their analysis or reuse difficult.",
+    "role": "Lead developer responsible for application logic, NBT parsing, map rendering and overall architecture. The UI prototype was designed in collaboration with a designer.",
+    "approach": "Design and implementation of a desktop application in WPF following the MVVM pattern to read and process NBT data, interpret map information and export them as images.",
+    "challenges": [
+      "Correctly understanding and parsing the NBT data structure",
+      "Rendering maps respecting scaling and colors",
+      "Detecting Minecraft installations and world paths in Windows"
+    ],
+    "learnings": [
+      "Working with binary formats and data structures",
+      "Practical application of the MVVM pattern in WPF",
+      "Separation of responsibilities between UI and business logic"
+    ]
+  },
+  "tags": [
+    {
+      "name": "C#",
+      "icon": { "name": "csharp" },
+      "color": "green",
+      "type": "pill"
+    },
+    {
+      "name": "WPF",
+      "icon": { "name": "dot-net" },
+      "color": "blue",
+      "type": "pill"
+    },
+    {
+      "name": "MVVM",
+      "icon": { "name": "layers", "isLucideIcon": true },
+      "color": "rose",
+      "type": "pill"
+    }
+  ],
+  "images": [
+    {
+      "url": "/projects/nbtmap-1.png",
+      "description": "Splash screen design (light variant). Initial screen with loading animation and Minecraft installation detection."
+    },
+    {
+      "url": "/projects/nbtmap-2.png",
+      "description": "Splash screen design (dark variant). Alternative version focused on a consistent dark mode visual experience."
+    }
+  ],
+  "repo_link": {
+    "label": "GitHub Repository",
+    "url": "https://github.com/Jorgemacias-12/NBTMap-Explorer",
+    "icon": { "name": "github" }
+  }
+}
+```
+
+## Step-by-Step Guide
+
+<Steps>
+  <Step title="Open the locale file">
+    Navigate to `src/locales/en.json` (or `es.json` for Spanish content) in your project.
+  </Step>
+
+  <Step title="Find the projects array">
+    Locate the `sections_data.projects` array in the JSON structure. This is where all projects are defined.
+  </Step>
+
+  <Step title="Add project images">
+    Before adding your project to the JSON file, place your project images in the `public/projects/` directory. Use descriptive filenames like `myproject-1.png`, `myproject-2.png`, etc.
+  </Step>
+
+  <Step title="Create your project object">
+    Add a new object to the projects array with all required fields. Use the example above as a template, replacing values with your project's information.
+
+    Pay special attention to:
+    - Choose the correct `status` value from the available options
+    - Use consistent icon names (check existing projects for available icons)
+    - Ensure image paths start with `/projects/`
+    - Set `isLucideIcon: true` for Lucide icons (like "layers", "file-code", "gamepad")
+  </Step>
+
+  <Step title="Validate JSON syntax">
+    Ensure your JSON is valid - all brackets and braces must be properly closed, and commas must be correctly placed between array items and object properties.
+  </Step>
+
+  <Step title="Test locally">
+    Run `bun dev` to start the development server and verify your project appears correctly on the Projects page with all images, tags, and information displaying properly.
+  </Step>
+</Steps>
+
+## Project Status Types
+
+The portfolio includes six status types with automatic color coding and tooltips:
+
+| Status | Description | Use Case |
+|--------|-------------|----------|
+| `active` | Project in active development | Currently working on new features |
+| `maintenance` | Receiving minor improvements | Stable, occasional updates |
+| `completed` | Finished, no active development | Project is done |
+| `paused` | Temporarily stopped | On hold, may resume later |
+| `planned` | Defined but not started | Future project |
+| `in_evaluation` | Under feasibility analysis | Considering the idea |
+
+## Tips
+
+<Tip>
+  Keep image file sizes optimized (under 500KB) for better portfolio performance. Use WebP format when possible.
+</Tip>
+
+<Tip>
+  For icons, you can use either built-in simple-icons (like "react", "typescript", "github") or Lucide icons (set `isLucideIcon: true`).
+</Tip>
+
+<Warning>
+  Make sure to update both `en.json` and `es.json` if your portfolio supports both languages, keeping the structure identical.
+</Warning>

@@ -1,0 +1,433 @@
+---
+title: Theme System
+description: Complete guide to the dark/light mode theme system, custom color palette, and theme persistence
+---
+
+## Overview
+
+The portfolio features a sophisticated theme system that supports both dark and light modes with a custom color palette. The theme persists across sessions using localStorage and respects user system preferences.
+
+## Dark Mode Configuration
+
+Tailwind CSS is configured to use class-based dark mode in `tailwind.config.mjs`:
+
+```javascript tailwind.config.mjs
+export default {
+  content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        // Custom color palette
+      },
+    },
+  },
+};
+```
+
+<Info>
+  **Class-based Dark Mode**: The theme is controlled by adding/removing the `dark` class from the root HTML element, enabling instant theme switching without page reloads.
+</Info>
+
+## Custom Color Palette
+
+The portfolio uses three custom color systems optimized for both light and dark themes.
+
+### Gray Scale
+
+A standard gray scale for neutral elements:
+
+```javascript tailwind.config.mjs
+colors: {
+  gray: {
+    50: "#F9FAFB",
+    100: "#F3F4F6",
+    200: "#E5E7EB",
+    300: "#D1D5DB",
+    400: "#9CA3AF",
+    500: "#6B7280",
+    600: "#4B5563",
+    700: "#374151",
+    800: "#1F2937",
+    900: "#111827",
+  },
+}
+```
+
+### Dark Scale
+
+A comprehensive dark scale with fine-grained control (50-point increments):
+
+```javascript tailwind.config.mjs
+dark: {
+  900: "#000000",
+  850: "#0A0A0A",
+  800: "#121416",
+  750: "#141619",
+  700: "#1A1D21",
+  650: "#202327",
+  600: "#2C3036",
+  550: "#373C43",
+  500: "#444B54",
+  450: "#525965",
+  400: "#646B75",
+  350: "#7A828C",
+  300: "#959DA8",
+  250: "#B1BAC4",
+  200: "#CED4DB",
+  150: "#E1E7EF",
+  100: "#F0F3F8",
+  50: "#F9FBFF",
+}
+```
+
+<Note>
+  The extended dark scale (50-point increments) provides precise control over background and text colors, creating subtle depth and hierarchy in the UI.
+</Note>
+
+### Accent Scale
+
+A vibrant orange accent color system:
+
+```javascript tailwind.config.mjs
+accent: {
+  950: "#2A0C00",
+  900: "#3A1500",
+  850: "#4A1D00",
+  800: "#5A2600",
+  750: "#6A2E00",
+  700: "#7A3600",
+  650: "#8A3E00",
+  600: "#9A4600",
+  550: "#AA4E00",
+  500: "#FF5C00",  // Primary accent
+  450: "#FF6F1A",
+  400: "#FF8333",
+  350: "#FF974D",
+  300: "#FFAB66",
+  250: "#FFBF80",
+  200: "#FFD399",
+  150: "#FFE7B3",
+  100: "#FFF3CC",
+  50: "#FFF9E6",
+}
+```
+
+## Using Color Classes
+
+All custom colors can be used with standard Tailwind utilities:
+
+```html
+<!-- Background colors -->
+<div class="bg-dark-800 dark:bg-dark-700">
+  
+<!-- Text colors -->
+<p class="text-gray-600 dark:text-dark-200">
+
+<!-- Border colors -->
+<button class="border-accent-500 hover:border-accent-400">
+
+<!-- Fine-grained dark mode control -->
+<div class="bg-dark-750 hover:bg-dark-700">
+```
+
+## Theme Toggler Component
+
+The theme system is controlled by the `ThemeToggler` React component:
+
+```tsx src/components/ThemeToggler.tsx
+import { ICON_SIZE_IN_PX } from "@/config";
+import { getTranslation } from "@/i18n";
+import type { Locale, Theme } from "@/types";
+import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
+
+interface Props {
+  lang: Locale;
+}
+
+export const ThemeToggler = ({ lang }: Props) => {
+  const [theme, setTheme] = useState<Theme>("dark");
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setMounted(true);
+
+    const savedTheme = localStorage.getItem("theme") as Theme | null;
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    const initialTheme = savedTheme || (prefersDark ? "dark" : "light");
+
+    setTheme(initialTheme);
+    applyTheme(initialTheme);
+  }, []);
+
+  const applyTheme = (newTheme: Theme) => {
+    const html = document.documentElement;
+
+    if (newTheme === "dark") {
+      html.classList.add("dark");
+    } else {
+      html.classList.remove("dark");
+    }
+    localStorage.setItem("theme", newTheme);
+  };
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    applyTheme(newTheme);
+  };
+
+  if (!mounted) {
+    return <div className="w-10 h-10" />;
+  }
+
+  const { t } = getTranslation(lang);
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="p-2 rounded-lg bg-gray-100 dark:bg-dark-700 cursor-pointer hover:bg-gray-300 transition-colors text-black dark:text-white hover:dark:bg-dark-600"
+      type="button"
+      title={t("components.theme_toggler.title")}
+      aria-label={t("components.theme_toggler.aria-label")}
+    >
+      {theme === "light" ? (
+        <Moon size={ICON_SIZE_IN_PX} />
+      ) : (
+        <Sun size={ICON_SIZE_IN_PX} />
+      )}
+    </button>
+  );
+};
+```
+
+## Theme Initialization Flow
+
+<Steps>
+  <Step title="Component Mount">
+    The component sets `mounted` to true, preventing hydration mismatches.
+  </Step>
+  
+  <Step title="Theme Detection">
+    Checks for saved theme in localStorage:
+    ```typescript
+    const savedTheme = localStorage.getItem("theme") as Theme | null;
+    ```
+  </Step>
+  
+  <Step title="System Preference Check">
+    If no saved theme exists, checks the user's system preference:
+    ```typescript
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    ```
+  </Step>
+  
+  <Step title="Theme Application">
+    Applies the determined theme (saved > system preference > default dark):
+    ```typescript
+    const initialTheme = savedTheme || (prefersDark ? "dark" : "light");
+    setTheme(initialTheme);
+    applyTheme(initialTheme);
+    ```
+  </Step>
+</Steps>
+
+## Theme Persistence
+
+The theme is persisted across sessions using localStorage:
+
+```typescript
+const applyTheme = (newTheme: Theme) => {
+  const html = document.documentElement;
+
+  if (newTheme === "dark") {
+    html.classList.add("dark");
+  } else {
+    html.classList.remove("dark");
+  }
+  localStorage.setItem("theme", newTheme);
+};
+```
+
+<Tip>
+  The theme is saved immediately when changed, ensuring the user's preference persists even if they close the browser.
+</Tip>
+
+## Preventing Flash of Unstyled Content
+
+### Mounting Guard
+
+The component returns a placeholder during SSR to prevent hydration mismatches:
+
+```tsx
+if (!mounted) {
+  return <div className="w-10 h-10" />;
+}
+```
+
+### Why This Matters
+
+<CardGroup cols={2}>
+  <Card title="Server-Side Rendering" icon="server">
+    Astro pre-renders the page on the server where localStorage is unavailable.
+  </Card>
+  
+  <Card title="Hydration Safety" icon="droplet">
+    Waiting until mount ensures the React component matches the server-rendered HTML.
+  </Card>
+  
+  <Card title="No Theme Flash" icon="zap">
+    The theme is applied before the content becomes visible, preventing jarring transitions.
+  </Card>
+  
+  <Card title="Seamless Experience" icon="sparkles">
+    Users see their preferred theme immediately on every page load.
+  </Card>
+</CardGroup>
+
+## Theme Toggle Button Styling
+
+The toggle button adapts to the current theme:
+
+```tsx
+<button
+  className="
+    p-2 rounded-lg 
+    bg-gray-100 dark:bg-dark-700 
+    cursor-pointer 
+    hover:bg-gray-300 
+    transition-colors 
+    text-black dark:text-white 
+    hover:dark:bg-dark-600
+  "
+>
+  {theme === "light" ? <Moon /> : <Sun />}
+</button>
+```
+
+### Breakdown
+
+- **Light Mode**: Gray background (`bg-gray-100`), black text
+- **Dark Mode**: Dark background (`dark:bg-dark-700`), white text
+- **Hover Effects**: Lighter backgrounds on hover in both modes
+- **Icon Toggle**: Moon icon in light mode, Sun icon in dark mode
+
+## Accessibility
+
+The theme toggle includes proper accessibility attributes:
+
+```tsx
+<button
+  title={t("components.theme_toggler.title")}
+  aria-label={t("components.theme_toggler.aria-label")}
+  type="button"
+>
+```
+
+Translations for both languages:
+
+<CodeGroup>
+
+```json en.json
+{
+  "components": {
+    "theme_toggler": {
+      "title": "Button to switch dark/light theme",
+      "aria-label": "Button that changes the portfolio theme between dark/light"
+    }
+  }
+}
+```
+
+```json es.json
+{
+  "components": {
+    "theme_toggler": {
+      "title": "Botón para cambiar de tema oscuro/claro",
+      "aria-label": "Botón que cambia el tema del portafolio entre oscuro/claro"
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+## Dynamic Color Safelist
+
+To support dynamically generated color classes (e.g., skill tags), the Tailwind config includes a safelist:
+
+```javascript tailwind.config.mjs
+safelist: [
+  {
+    pattern:
+      /text-(blue|green|orange|red|yellow|purple|pink|indigo|rose|violet|cyan)-(50|100|200|300|400|500|600|700|800|900)/,
+  },
+  {
+    pattern:
+      /bg-(blue|green|orange|red|yellow|purple|pink|indigo|rose|violet|cyan)-(50|100|200|300|400|500|600|700|800|900)/,
+  },
+],
+```
+
+<Warning>
+  Without the safelist, Tailwind would purge dynamically generated classes that aren't explicitly written in your source files.
+</Warning>
+
+## Creating Theme-Aware Components
+
+When building new components, use Tailwind's dark mode variant:
+
+```tsx
+// Light mode first, then dark mode override
+<div className="bg-white dark:bg-dark-800">
+  <h2 className="text-gray-900 dark:text-dark-100">Title</h2>
+  <p className="text-gray-600 dark:text-dark-300">Description</p>
+</div>
+```
+
+### Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Light Mode First" icon="sun">
+    Define light mode styles first, then add dark mode overrides with the `dark:` prefix.
+  </Card>
+  
+  <Card title="Consistent Contrast" icon="contrast">
+    Ensure sufficient contrast in both themes using the extended color scales.
+  </Card>
+  
+  <Card title="Test Both Themes" icon="test-tube">
+    Always test components in both light and dark modes during development.
+  </Card>
+  
+  <Card title="Use Custom Colors" icon="palette">
+    Prefer the custom `dark` and `accent` scales over generic Tailwind colors for consistency.
+  </Card>
+</CardGroup>
+
+## Theme Type Definition
+
+The theme type is defined in TypeScript:
+
+```typescript src/types/index.ts
+export type Theme = "light" | "dark";
+```
+
+This ensures type safety throughout the application when working with themes.
+
+## System Preference Detection
+
+The theme system respects the user's operating system preference:
+
+```typescript
+const prefersDark = window.matchMedia(
+  "(prefers-color-scheme: dark)"
+).matches;
+```
+
+This provides a sensible default when the user visits for the first time, creating a seamless experience that respects their system settings.

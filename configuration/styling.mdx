@@ -1,0 +1,325 @@
+---
+title: Styling Configuration
+description: Learn how to configure Tailwind CSS, custom colors, themes, and dark mode for the portfolio
+---
+
+The portfolio uses Tailwind CSS for styling with custom color palettes and dark mode support.
+
+## Tailwind Configuration
+
+The main styling configuration is in `tailwind.config.mjs`:
+
+```js
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        gray: { /* ... */ },
+        dark: { /* ... */ },
+        accent: { /* ... */ },
+      },
+    },
+  },
+  plugins: [],
+  safelist: [ /* ... */ ],
+};
+```
+
+### Configuration Options
+
+- `content` - File paths to scan for Tailwind classes
+- `darkMode: "class"` - Enables class-based dark mode (using `.dark` class on html element)
+- `theme.extend.colors` - Custom color palettes
+- `safelist` - Dynamic classes that shouldn't be purged
+
+## Custom Color Palettes
+
+The portfolio defines three custom color scales:
+
+### Gray Scale
+
+Standard gray colors used throughout the UI:
+
+```js
+gray: {
+  50: "#F9FAFB",
+  100: "#F3F4F6",
+  200: "#E5E7EB",
+  300: "#D1D5DB",
+  400: "#9CA3AF",
+  500: "#6B7280",
+  600: "#4B5563",
+  700: "#374151",
+  800: "#1F2937",
+  900: "#111827",
+}
+```
+
+Usage:
+```html
+<div class="bg-gray-100 text-gray-900">
+  Light background with dark text
+</div>
+```
+
+### Dark Scale
+
+Custom dark theme colors with granular shades:
+
+```js
+dark: {
+  900: "#000000",
+  850: "#0A0A0A",
+  800: "#121416",
+  750: "#141619",
+  700: "#1A1D21",
+  650: "#202327",
+  600: "#2C3036",
+  550: "#373C43",
+  500: "#444B54",
+  450: "#525965",
+  400: "#646B75",
+  350: "#7A828C",
+  300: "#959DA8",
+  250: "#B1BAC4",
+  200: "#CED4DB",
+  150: "#E1E7EF",
+  100: "#F0F3F8",
+  50: "#F9FBFF",
+}
+```
+
+This extended scale provides fine-grained control for dark mode interfaces:
+
+```html
+<div class="dark:bg-dark-800 dark:text-dark-100">
+  Dark mode styling
+</div>
+```
+
+### Accent Scale
+
+Brand accent color (orange) with full range:
+
+```js
+accent: {
+  950: "#2A0C00",
+  900: "#3A1500",
+  850: "#4A1D00",
+  800: "#5A2600",
+  750: "#6A2E00",
+  700: "#7A3600",
+  650: "#8A3E00",
+  600: "#9A4600",
+  550: "#AA4E00",
+  500: "#FF5C00",
+  450: "#FF6F1A",
+  400: "#FF8333",
+  350: "#FF974D",
+  300: "#FFAB66",
+  250: "#FFBF80",
+  200: "#FFD399",
+  150: "#FFE7B3",
+  100: "#FFF3CC",
+  50: "#FFF9E6",
+}
+```
+
+Usage for brand elements:
+```html
+<button class="bg-accent-500 hover:bg-accent-600 text-white">
+  Call to Action
+</button>
+```
+
+## Dark Mode Implementation
+
+The portfolio uses Tailwind's class-based dark mode strategy:
+
+### How It Works
+
+1. Dark mode is toggled by adding/removing the `dark` class on the `<html>` element
+2. Components use `dark:` prefix for dark mode variants
+3. The theme preference is stored in localStorage
+
+### Dark Mode Classes
+
+Example of light/dark mode styling:
+
+```html
+<div class="bg-white dark:bg-dark-800
+            text-gray-900 dark:text-dark-100
+            border-gray-200 dark:border-dark-600">
+  Adapts to light and dark mode
+</div>
+```
+
+### Theme Toggle Component
+
+The theme toggler switches between:
+- Light mode: Removes `dark` class from `<html>`
+- Dark mode: Adds `dark` class to `<html>`
+
+Preference is persisted in localStorage and applied on page load.
+
+## Safelist Configuration
+
+The safelist prevents Tailwind from purging dynamic classes used in content:
+
+```js
+safelist: [
+  {
+    pattern:
+      /text-(blue|green|orange|red|yellow|purple|pink|indigo|rose|violet|cyan)-(50|100|200|300|400|500|600|700|800|900)/,
+  },
+  {
+    pattern:
+      /bg-(blue|green|orange|red|yellow|purple|pink|indigo|rose|violet|cyan)-(50|100|200|300|400|500|600|700|800|900)/,
+  },
+]
+```
+
+### Why Safelist?
+
+Skills and tags use dynamic colors from locale files:
+```json
+{
+  "name": "JavaScript",
+  "color": "green"
+}
+```
+
+This generates classes like `text-green-500` and `bg-green-100` at runtime. Without safelisting, these would be purged since they don't appear directly in source code.
+
+### Supported Dynamic Colors
+
+The safelist supports these Tailwind color families:
+- blue
+- green
+- orange
+- red
+- yellow
+- purple
+- pink
+- indigo
+- rose
+- violet
+- cyan
+
+All shades from 50 to 900 are preserved for both text and background utilities.
+
+## Typography
+
+The portfolio relies on Tailwind's default typography with system fonts for optimal performance and consistency.
+
+### Font Stack
+
+Tailwind's default sans-serif stack:
+```css
+font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 
+  "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+```
+
+### Text Utilities
+
+Common typography patterns:
+```html
+<!-- Headings -->
+<h1 class="text-4xl font-bold text-gray-900 dark:text-dark-50">
+  Section Title
+</h1>
+
+<!-- Body text -->
+<p class="text-base text-gray-700 dark:text-dark-200">
+  Paragraph content
+</p>
+
+<!-- Accent text -->
+<span class="text-accent-500 font-semibold">
+  Highlighted text
+</span>
+```
+
+## Responsive Design
+
+Tailwind breakpoints are used throughout:
+
+- `sm:` - 640px and up
+- `md:` - 768px and up
+- `lg:` - 1024px and up
+- `xl:` - 1280px and up
+- `2xl:` - 1536px and up
+
+Example:
+```html
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <!-- Responsive grid layout -->
+</div>
+```
+
+## Best Practices
+
+### 1. Use Custom Colors Appropriately
+
+- `gray` - Neutral UI elements, borders, text
+- `dark` - Dark mode backgrounds and text
+- `accent` - Brand elements, CTAs, highlights
+
+### 2. Always Provide Dark Mode Variants
+
+```html
+<!-- ✓ Good -->
+<div class="bg-white dark:bg-dark-800">
+
+<!-- ✗ Bad -->
+<div class="bg-white">
+```
+
+### 3. Use Semantic Color Choices
+
+Match color intensity to context:
+```html
+<!-- Primary text -->
+<p class="text-gray-900 dark:text-dark-100">
+
+<!-- Secondary text -->
+<p class="text-gray-600 dark:text-dark-300">
+
+<!-- Muted text -->
+<p class="text-gray-400 dark:text-dark-400">
+```
+
+### 4. Safelist Only What's Dynamic
+
+The current safelist covers skill/tag colors. If you add new dynamic color features, update the safelist patterns.
+
+### 5. Test Both Themes
+
+Always verify components look good in both light and dark modes.
+
+## Customizing Colors
+
+To change the accent color:
+
+1. Update the `accent` scale in `tailwind.config.mjs`
+2. Generate a full scale (50-950) for consistency
+3. Keep sufficient contrast for accessibility
+
+### Generating Color Scales
+
+Tools to generate Tailwind color scales:
+- [Tailwind Color Shades Generator](https://uicolors.app/create)
+- [Palette Generator](https://tailwindshades.com/)
+
+## Performance Optimization
+
+The configuration includes:
+
+1. **PurgeCSS**: Unused styles are removed in production
+2. **Safelist**: Dynamic classes are preserved
+3. **Content Scanning**: Only styles used in specified file types are included
+
+Production builds are optimized automatically.

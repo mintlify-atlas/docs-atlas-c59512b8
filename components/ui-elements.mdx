@@ -1,0 +1,753 @@
+---
+title: UI Element Components
+description: Reusable UI components for building the portfolio interface
+---
+
+## Card.astro
+
+Basic card wrapper component providing consistent styling for content containers.
+
+### Location
+
+`src/components/Card.astro`
+
+### Props
+
+<ParamField path="class" type="string">
+  Additional CSS classes to apply to the card
+</ParamField>
+
+### Code
+
+```astro
+---
+import clsx from "clsx";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<article
+  class={clsx(
+    "bg-gray-100 dark:bg-dark-700 transition-colors duration-300 p-2 rounded-lg w-full",
+    className
+  )}
+>
+  <slot />
+</article>
+```
+
+### Usage
+
+```astro
+<Card class="flex flex-col gap-4">
+  <h3>Card Title</h3>
+  <p>Card content goes here</p>
+</Card>
+```
+
+### Features
+
+- Light/dark theme support
+- Rounded corners
+- Padding and full width by default
+- Smooth color transitions
+- Accepts custom classes via `clsx`
+
+---
+
+## Icon.astro
+
+Flexible icon component supporting both Devicon and Lucide icon libraries.
+
+### Location
+
+`src/components/Icon.astro`
+
+### Props
+
+<ParamField path="name" type="string" required>
+  Icon name (Devicon format like "typescript" or Lucide format like "github")
+</ParamField>
+
+<ParamField path="isLucideIcon" type="boolean" default="false">
+  Whether to use Lucide icons instead of Devicon
+</ParamField>
+
+<ParamField path="size" type="number" default="24">
+  Icon size in pixels (only for Lucide icons)
+</ParamField>
+
+<ParamField path="class" type="string">
+  Additional CSS classes for styling
+</ParamField>
+
+### Code
+
+```astro
+---
+import * as lucideIcons from "lucide-astro";
+import type { Icon as Props } from "@/types";
+import clsx from "clsx";
+
+const {
+  name,
+  class: className = "",
+  isLucideIcon = false,
+  size = 24,
+} = Astro.props as Props;
+
+const toPascalCase = (str: string) => {
+  return str
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join("");
+};
+
+const LucideIcon = isLucideIcon
+  ? (lucideIcons as Record<string, any>)[toPascalCase(name)]
+  : null;
+---
+
+{
+  isLucideIcon && LucideIcon ? (
+    <LucideIcon size={size} class={className} />
+  ) : (
+    <i class={clsx(`devicon-${name}-plain`, className)} aria-hidden="true" />
+  )
+}
+```
+
+### Usage
+
+#### Devicon Icons
+
+```astro
+<Icon name="typescript" class="text-blue-600" />
+<Icon name="react" class="text-cyan-500" />
+<Icon name="nodejs" class="text-green-600" />
+```
+
+#### Lucide Icons
+
+```astro
+<Icon name="github" isLucideIcon size={32} class="text-gray-800" />
+<Icon name="external-link" isLucideIcon size={20} />
+```
+
+### Icon Type Definition
+
+```typescript
+interface Icon {
+  name: string;
+  isLucideIcon?: boolean;
+  size?: number;
+  class?: string;
+}
+```
+
+<Tip>
+Devicon provides 150+ technology icons. Browse available icons at [devicon.dev](https://devicon.dev).
+</Tip>
+
+---
+
+## Link.astro
+
+Enhanced link component with different styles for menu and element contexts.
+
+### Location
+
+`src/components/Link.astro`
+
+### Props
+
+<ParamField path="label" type="string" required>
+  Link text to display
+</ParamField>
+
+<ParamField path="url" type="string" required>
+  Link URL (can be relative for menu links or absolute for external links)
+</ParamField>
+
+<ParamField path="isForMenu" type="boolean" default="false">
+  Style as a navigation menu item
+</ParamField>
+
+<ParamField path="isForElement" type="boolean" default="false">
+  Style as a button/action link
+</ParamField>
+
+<ParamField path="isLastElement" type="boolean" default="false">
+  Use outline style (for secondary actions)
+</ParamField>
+
+<ParamField path="icon" type="Icon">
+  Optional icon to display before the label
+</ParamField>
+
+### Code
+
+```astro
+---
+import type { LinkComponentProps as Props } from "@/types";
+import { appendBaseUrl } from "@/utils";
+import Icon from "./Icon.astro";
+import clsx from "clsx";
+
+const { label, url, isForMenu, isForElement, isLastElement, icon } =
+  Astro.props;
+
+const internalUrl = isForMenu ? appendBaseUrl(`#${url}`) : appendBaseUrl(url);
+---
+
+{isForMenu && (
+  <li>
+    <a
+      class="link flex flex-1 w-full p-2 rounded-md text-sm hover:bg-accent-600 hover:text-white"
+      aria-label={label}
+      data-url={url}
+      href={internalUrl}
+    >
+      {label}
+    </a>
+  </li>
+)}
+
+{isForElement && (
+  <a
+    target="_blank"
+    rel="noopener noreferrer"
+    href={url}
+    class={clsx(
+      "inline-flex gap-2 items-center rounded-md p-2 transition-colors duration-200",
+      isLastElement
+        ? "border border-gray-200 dark:border-dark-600 hover:border-accent-700"
+        : "bg-accent-700 dark:bg-accent-500 text-white hover:bg-accent-700/50"
+    )}
+  >
+    {icon && <Icon {...icon} />}
+    {label}
+  </a>
+)}
+```
+
+### Usage Examples
+
+#### Menu Link
+
+```astro
+<Link 
+  label="About" 
+  url="about" 
+  isForMenu 
+/>
+```
+
+#### Primary Action Button
+
+```astro
+<Link 
+  label="View Demo" 
+  url="https://example.com" 
+  isForElement 
+  icon={{ name: "external-link", isLucideIcon: true }}
+/>
+```
+
+#### Secondary Action Button
+
+```astro
+<Link 
+  label="View Code" 
+  url="https://github.com/user/repo" 
+  isForElement 
+  isLastElement
+  icon={{ name: "github", isLucideIcon: true }}
+/>
+```
+
+---
+
+## Skill.astro
+
+Skill badge component with two visual variants: card and pill.
+
+### Location
+
+`src/components/Skill.astro`
+
+### Props
+
+<ParamField path="name" type="string" required>
+  Skill name to display
+</ParamField>
+
+<ParamField path="icon" type="Icon" required>
+  Icon representing the skill
+</ParamField>
+
+<ParamField path="color" type="string" required>
+  Tailwind color name (e.g., "blue", "green", "purple")
+</ParamField>
+
+<ParamField path="type" type="'card' | 'pill'" default="card">
+  Visual variant - card for larger badges, pill for compact tags
+</ParamField>
+
+### Code
+
+```astro
+---
+import type { Skill as Props, SkillVariant } from "@/types";
+import clsx from "clsx";
+import Icon from "./Icon.astro";
+
+const { icon, name, color, type = "card" } = Astro.props;
+
+const cardStylesForVariant: Record<SkillVariant, string> = {
+  card: "p-2 rounded-md flex items-center gap-2 bg-gray-100 dark:bg-dark-700",
+  pill: clsx(
+    "p-2 rounded-full flex items-center gap-1",
+    `bg-${color}-500/10 dark:bg-${color}-500/50`
+  ),
+};
+
+const iconStylesForVariant: Record<SkillVariant, string> = {
+  card: `text-lg text-${color}-600 dark:text-${color}-300`,
+  pill: `text-${color}-800 dark:text-${color}-400`,
+};
+
+const textStylesForVariant: Record<SkillVariant, string> = {
+  card: "",
+  pill: `text-xs font-medium text-${color}-800 dark:text-${color}-400`,
+};
+---
+
+<article class={cardStylesForVariant[type]}>
+  <Icon class={iconStylesForVariant[type]} {...icon} />
+  <span class={textStylesForVariant[type]}>
+    {name}
+  </span>
+</article>
+```
+
+### Usage Examples
+
+#### Card Variant (Skills Section)
+
+```astro
+<Skill 
+  name="TypeScript" 
+  icon={{ name: "typescript" }}
+  color="blue"
+  type="card"
+/>
+```
+
+#### Pill Variant (Project Tags)
+
+```astro
+<Skill 
+  name="React" 
+  icon={{ name: "react" }}
+  color="cyan"
+  type="pill"
+/>
+```
+
+### Skill Type Definition
+
+```typescript
+interface Skill {
+  name: string;
+  icon: Icon;
+  color: string;
+  type?: 'card' | 'pill';
+}
+
+type SkillVariant = 'card' | 'pill';
+```
+
+---
+
+## ProjectStatusBadge.astro
+
+Status indicator badge for projects with color-coded states.
+
+### Location
+
+`src/components/ProjectStatusBadge.astro`
+
+### Props
+
+<ParamField path="status" type="ProjectStatus" required>
+  Project status: "completed", "in-progress", or "maintenance"
+</ParamField>
+
+### Code
+
+```astro
+---
+import { getTranslation } from "@/i18n";
+import type { ProjectStatus } from "@/types";
+import type { Locale } from "@/types";
+import {
+  baseBadgeClasses,
+  projectStatusBadgeClasses,
+  projectStatusLabelKeys,
+  projectStatusTooltipKeys,
+} from "@/constants";
+import clsx from "clsx";
+
+interface Props {
+  status: ProjectStatus;
+}
+
+const locale = Astro.currentLocale as Locale;
+const { t } = getTranslation(locale);
+const { status } = Astro.props;
+
+const label = t(projectStatusLabelKeys[status]);
+const tooltip = t(projectStatusTooltipKeys[status]);
+---
+
+<span
+  class={clsx(baseBadgeClasses, projectStatusBadgeClasses[status])}
+  title={tooltip as string}
+>
+  {label}
+</span>
+```
+
+### Status Types
+
+```typescript
+type ProjectStatus = "completed" | "in-progress" | "maintenance";
+```
+
+### Status Styles (from constants)
+
+```typescript
+const projectStatusBadgeClasses: Record<ProjectStatus, string> = {
+  completed: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400",
+  "in-progress": "bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400",
+  maintenance: "bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400",
+};
+```
+
+### Usage
+
+```astro
+<ProjectStatusBadge status="completed" />
+<ProjectStatusBadge status="in-progress" />
+<ProjectStatusBadge status="maintenance" />
+```
+
+---
+
+## Carrousel.tsx
+
+Interactive image gallery with zoom, rotation, and navigation controls (React component).
+
+### Location
+
+`src/components/Carrousel.tsx`
+
+### Props
+
+<ParamField path="images" type="Image[]" required>
+  Array of images to display in the carousel
+</ParamField>
+
+<ParamField path="locale" type="Locale">
+  Current locale for translations
+</ParamField>
+
+### Image Type Definition
+
+```typescript
+interface Image {
+  url: string;
+  description: string;
+}
+```
+
+### Features
+
+#### Thumbnail Preview
+
+- Click to open full gallery
+- Shows image count badge for multiple images
+- Lazy loading for performance
+
+#### Modal Gallery
+
+- **Navigation**: Arrow buttons and keyboard (← →)
+- **Zoom**: In/Out buttons and keyboard (+ -)
+- **Rotate**: 90° rotation with keyboard (R)
+- **Reset**: Return to original scale/rotation
+- **Thumbnails**: Click to jump to any image
+- **Close**: X button or Escape key
+
+#### Touch/Gesture Support
+
+- Swipe navigation on mobile
+- Pinch to zoom
+- Double-tap to reset
+
+### Code Example
+
+```tsx
+import { Carrousel } from "@/components/Carrousel";
+
+const images = [
+  { url: "/project1.jpg", description: "Project homepage" },
+  { url: "/project2.jpg", description: "Dashboard view" },
+  { url: "/project3.jpg", description: "Mobile responsive" },
+];
+
+<Carrousel 
+  client:only="react" 
+  images={images} 
+  locale="en" 
+/>
+```
+
+### Keyboard Controls
+
+| Key | Action |
+|-----|--------|
+| `←` | Previous image |
+| `→` | Next image |
+| `+` / `=` | Zoom in |
+| `-` | Zoom out |
+| `R` | Rotate 90° |
+| `Esc` | Close gallery |
+
+### State Management
+
+```typescript
+const [currentIndex, setCurrentIndex] = useState(0);
+const [scale, setScale] = useState(1);
+const [rotation, setRotation] = useState(0);
+const [isAnimating, setIsAnimating] = useState(false);
+const [isImageLoading, setIsImageLoading] = useState(true);
+const [hasImageError, setHasImageError] = useState(false);
+```
+
+### Image Loading
+
+- Shows skeleton loader while loading
+- Error state with retry button
+- 5-second timeout for slow connections
+
+---
+
+## Supporting Components
+
+### CarrouselButton.tsx
+
+Reusable button component for carousel controls.
+
+```tsx
+import type { ButtonHTMLAttributes } from "react";
+import { clsx } from "clsx";
+
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {}
+
+export const CarrouselButton = ({
+  children,
+  type,
+  className,
+  ...props
+}: Props) => {
+  return (
+    <button
+      type={type ?? "button"}
+      className={clsx(
+        "p-2 text-white bg-black/50 hover:bg-black rounded-md",
+        "focus:outline-none focus:ring-2 focus:ring-white/10",
+        "disabled:opacity-50 disabled:cursor-not-allowed",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+```
+
+### SocialLink.astro
+
+Social media link card for the footer.
+
+```astro
+---
+import type { SocialNetwork as Props } from "@/types";
+import Icon from "./Icon.astro";
+
+const { icon, label, url } = Astro.props;
+---
+
+<a
+  class="flex flex-col p-4 rounded-lg items-center justify-center border border-accent-700 hover:bg-accent-700/10 transition-all"
+  rel="noopener noreferrer"
+  target="_blank"
+  href={url}
+>
+  <Icon {...icon} />
+  <span>{label}</span>
+</a>
+```
+
+---
+
+## ThemeToggler.tsx
+
+Dark/light mode toggle switch (React component).
+
+### Location
+
+`src/components/ThemeToggler.tsx`
+
+### Props
+
+<ParamField path="lang" type="Locale" required>
+  Current locale for button labels
+</ParamField>
+
+### Code
+
+```tsx
+import { getTranslation } from "@/i18n";
+import type { Locale, Theme } from "@/types";
+import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
+
+interface Props {
+  lang: Locale;
+}
+
+export const ThemeToggler = ({ lang }: Props) => {
+  const [theme, setTheme] = useState<Theme>("dark");
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setMounted(true);
+    
+    const savedTheme = localStorage.getItem("theme") as Theme | null;
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    const initialTheme = savedTheme || (prefersDark ? "dark" : "light");
+    
+    setTheme(initialTheme);
+    applyTheme(initialTheme);
+  }, []);
+
+  const applyTheme = (newTheme: Theme) => {
+    const html = document.documentElement;
+    
+    if (newTheme === "dark") {
+      html.classList.add("dark");
+    } else {
+      html.classList.remove("dark");
+    }
+    localStorage.setItem("theme", newTheme);
+  };
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    applyTheme(newTheme);
+  };
+
+  if (!mounted) {
+    return <div className="w-10 h-10" />;
+  }
+
+  const { t } = getTranslation(lang);
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="p-2 rounded-lg bg-gray-100 dark:bg-dark-700 hover:bg-gray-300 dark:hover:bg-dark-600"
+      type="button"
+      title={t("components.theme_toggler.title")}
+      aria-label={t("components.theme_toggler.aria-label")}
+    >
+      {theme === "light" ? (
+        <Moon size={24} />
+      ) : (
+        <Sun size={24} />
+      )}
+    </button>
+  );
+};
+```
+
+### Usage
+
+```astro
+---
+import { ThemeToggler } from "@/components/ThemeToggler";
+---
+
+<ThemeToggler lang="en" client:only="react" />
+```
+
+### Theme Persistence
+
+- Saves preference to `localStorage`
+- Respects system preference on first visit
+- Applies theme before hydration to prevent flash
+
+---
+
+## Common Patterns
+
+### Using `clsx` for Conditional Classes
+
+```astro
+import clsx from "clsx";
+
+<div class={clsx(
+  "base-class",
+  condition && "conditional-class",
+  customClass
+)}>
+```
+
+### Dark Mode Styling
+
+```astro
+<div class="bg-white dark:bg-dark-800 text-black dark:text-white">
+  <!-- Content -->
+</div>
+```
+
+### Responsive Sizing
+
+```astro
+<h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+  Title
+</h1>
+```
+
+---
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Section Components" icon="grid" href="/components/sections">
+    See UI components used in sections
+  </Card>
+  <Card title="Layout Components" icon="layout" href="/components/layout">
+    Core layout structures
+  </Card>
+</CardGroup>

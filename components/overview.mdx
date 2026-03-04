@@ -1,0 +1,183 @@
+---
+title: Components Overview
+description: Understanding the component architecture in Jorge Macias Portfolio
+---
+
+## Component Architecture
+
+The Jorge Macias Portfolio uses a hybrid component architecture that leverages both **Astro** and **React** components to build a performant, interactive portfolio website.
+
+## Component Types
+
+### Astro Components (.astro)
+
+Astro components are the primary building blocks, providing:
+
+- **Zero JavaScript by default** - Ship HTML and CSS only
+- **Server-side rendering** - Fast initial page loads
+- **Component composition** - Reusable UI patterns
+- **Slot-based content** - Flexible content injection
+
+**When to use Astro components:**
+- Static content display
+- Layout structures
+- Server-rendered sections
+- Components that don't need client-side interactivity
+
+### React Components (.tsx)
+
+React components add client-side interactivity where needed:
+
+- **Client-side state management** - Interactive UI elements
+- **Event handlers** - User interactions
+- **Dynamic updates** - Real-time changes without page reload
+
+**When to use React components:**
+- Interactive widgets (theme toggler, carousel)
+- Components with complex state
+- Real-time updates and animations
+- User input handling
+
+<Tip>
+Astro components can import and use React components with client directives like `client:only="react"` or `client:load`.
+</Tip>
+
+## Component Categories
+
+The portfolio organizes components into three main categories:
+
+### Layout Components
+
+Structural components that define the page architecture:
+
+- **Layout.astro** - Main page layout wrapper
+- **Header.astro** - Navigation and site header
+- **Footer.astro** - Site footer with contact info
+- **Section.astro** - Reusable section wrapper
+
+### Section Components
+
+Major content sections of the portfolio:
+
+- **About.astro** - Introduction and profile
+- **Skills.astro** - Technical skills display
+- **Experiences.astro** - Work experience timeline
+- **Projects.astro** - Project showcase grid
+- **Schools.astro** - Education history
+
+### UI Element Components
+
+Reusable UI components and widgets:
+
+- **Card.astro** - Content card wrapper
+- **Icon.astro** - Icon display (Devicon + Lucide)
+- **Link.astro** - Enhanced link component
+- **Skill.astro** - Skill badge display
+- **ProjectStatusBadge.astro** - Project status indicator
+- **Carrousel.tsx** - Interactive image gallery (React)
+- **ThemeToggler.tsx** - Dark/light mode toggle (React)
+
+## Import Patterns
+
+### Importing Astro Components
+
+```astro
+---
+import Section from "@/components/Section.astro";
+import Card from "@/components/Card.astro";
+import Skill from "@/components/Skill.astro";
+---
+
+<Section title="My Skills">
+  <Card>
+    <Skill name="TypeScript" icon={{ name: "typescript" }} />
+  </Card>
+</Section>
+```
+
+### Importing React Components
+
+```astro
+---
+import { Carrousel } from "@/components/Carrousel";
+import { ThemeToggler } from "@/components/ThemeToggler";
+---
+
+<Carrousel client:only="react" images={images} locale={locale} />
+<ThemeToggler client:only="react" lang={locale} />
+```
+
+<Note>
+The `@/` alias maps to the `src/` directory, configured in `tsconfig.json`.
+</Note>
+
+### Importing from Layouts
+
+```astro
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout>
+  <!-- Your page content -->
+</Layout>
+```
+
+## Component Props Pattern
+
+Most components define their props using TypeScript interfaces:
+
+```typescript
+// Defined in src/types/index.ts
+interface Props {
+  title: string;
+  optional?: boolean;
+  class?: string;
+}
+
+const { title, optional, class: className } = Astro.props;
+```
+
+## Styling Approach
+
+Components use **Tailwind CSS** for styling:
+
+- Utility-first CSS classes
+- Dark mode support with `dark:` prefix
+- Responsive design with `sm:`, `md:`, `lg:` prefixes
+- Custom color schemes (accent colors, dark theme)
+
+```astro
+<div class="bg-white dark:bg-dark-800 p-4 rounded-lg">
+  <!-- Content -->
+</div>
+```
+
+## Internationalization
+
+Components support multiple languages using the i18n system:
+
+```astro
+---
+import { getTranslation } from "@/i18n";
+import type { Locale } from "@/types";
+
+const { t } = getTranslation(Astro.currentLocale as Locale);
+---
+
+<h1>{t("sections.about.title")}</h1>
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Layout Components" icon="layout" href="/components/layout">
+    Learn about Layout, Header, Footer, and Section components
+  </Card>
+  <Card title="Section Components" icon="grid" href="/components/sections">
+    Explore About, Skills, Experience, and Project sections
+  </Card>
+  <Card title="UI Elements" icon="box" href="/components/ui-elements">
+    Discover reusable UI components like Card, Icon, and Carrousel
+  </Card>
+</CardGroup>

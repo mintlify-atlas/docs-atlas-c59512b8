@@ -1,0 +1,332 @@
+---
+title: Content Configuration
+description: Learn how to configure portfolio content including sections, skills, experience, projects, and education data
+---
+
+The portfolio content is managed through locale files located in `src/locales/`. Each locale file contains all the content for a specific language.
+
+## File Location
+
+- `src/locales/en.json` - English content
+- `src/locales/es.json` - Spanish content
+
+## Content Structure
+
+All portfolio content is stored in the `sections_data` object within each locale file.
+
+```json
+{
+  "site": { /* site metadata */ },
+  "sections": [ /* navigation sections */ ],
+  "sections_data": {
+    "about": { /* about section */ },
+    "skills": { /* skills section */ },
+    "experiences": [ /* experience entries */ ],
+    "projects": [ /* project entries */ ],
+    "education": [ /* education entries */ ]
+  },
+  "components": { /* component text */ }
+}
+```
+
+## About Section
+
+Configure the hero/about section with personal information:
+
+```json
+"about": {
+  "greeting": "Hello, I am",
+  "short_name": "Jorge Macias",
+  "position": "Fullstack Engineer",
+  "tagline": "Creating functional and well-thought experiences, guided by curiosity and continuous learning.",
+  "pfp_alt": "Jorge Macia's photo"
+}
+```
+
+### Fields
+
+- `greeting` - Greeting text displayed before name
+- `short_name` - Display name shown in hero
+- `position` - Job title or role
+- `tagline` - Personal tagline or description
+- `pfp_alt` - Alt text for profile picture
+
+## Skills Section
+
+Skills are organized into categories with individual skill entries:
+
+```json
+"skills": {
+  "categories": {
+    "langs": {
+      "title": "Programming Languages",
+      "content": [
+        {
+          "name": "JavaScript",
+          "color": "green",
+          "icon": {
+            "name": "javascript",
+            "isLucideIcon": false
+          }
+        },
+        {
+          "name": "TypeScript",
+          "color": "green",
+          "icon": {
+            "name": "typescript",
+            "isLucideIcon": false
+          }
+        }
+      ]
+    },
+    "frameworks": {
+      "title": "Frameworks",
+      "content": [
+        {
+          "name": "React",
+          "color": "blue",
+          "icon": {
+            "name": "react",
+            "isLucideIcon": false
+          }
+        }
+      ]
+    },
+    "tools": {
+      "title": "Development Tools",
+      "content": [
+        {
+          "name": "Git",
+          "color": "orange",
+          "icon": {
+            "name": "git",
+            "isLucideIcon": false
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+### Skill Entry Fields
+
+- `name` - Display name of the skill
+- `color` - Color theme (blue, green, orange, red, yellow, purple, pink, indigo, rose, violet, cyan)
+- `icon.name` - Icon identifier
+- `icon.isLucideIcon` - Whether icon is from Lucide icon library (true) or Simple Icons (false)
+
+### Category Keys
+
+You can create any category key. Common examples:
+- `langs` - Programming languages
+- `frameworks` - Frameworks and libraries
+- `tools` - Development tools
+
+## Experience Entries
+
+Experience entries are stored in an array:
+
+```json
+"experiences": [
+  {
+    "role": "Full Stack Developer",
+    "company": "SMCI",
+    "period": "December 2024 – February 2025",
+    "responsibilities": [
+      "Participation in the development of a software solution for the public transport sector, focused on real-time communication between embedded devices and a web management platform.",
+      "Development of a REST API for receiving, validating and processing data.",
+      "Automation of the deployment process for backend and frontend on the server."
+    ],
+    "technologies": [
+      {
+        "name": "REST API",
+        "icon": { "name": "server", "isLucideIcon": true },
+        "color": "blue"
+      },
+      {
+        "name": "React",
+        "icon": { "name": "react" },
+        "color": "cyan"
+      },
+      {
+        "name": "TypeScript",
+        "icon": { "name": "typescript" },
+        "color": "blue"
+      }
+    ]
+  }
+]
+```
+
+### Experience Fields
+
+- `role` - Job title or position
+- `company` - Company name
+- `period` - Employment period (free-form text)
+- `responsibilities` - Array of responsibility descriptions
+- `technologies` - Array of technology objects used in the role
+
+### Technology Object
+
+- `name` - Technology name
+- `icon.name` - Icon identifier
+- `icon.isLucideIcon` - Optional, defaults to false if omitted
+- `color` - Color theme
+
+## Project Entries
+
+Projects include detailed context, tags, images, and repository links:
+
+```json
+"projects": [
+  {
+    "name": "NBTMap Explorer",
+    "description": "Desktop application developed in C# to explore, visualize and export Minecraft item maps (map_*.dat) from NBT files, without needing to run Minecraft or use mods.",
+    "status": "active",
+    "context": {
+      "problem": "Minecraft item maps are stored in NBT files that are not easily readable or viewable outside the game, making their analysis or reuse difficult.",
+      "role": "Lead developer responsible for application logic, NBT parsing, map rendering and overall architecture. The UI prototype was designed in collaboration with a designer.",
+      "approach": "Design and implementation of a desktop application in WPF following the MVVM pattern to read and process NBT data, interpret map information and export them as images.",
+      "challenges": [
+        "Correctly understanding and parsing the NBT data structure",
+        "Rendering maps respecting scaling and colors",
+        "Detecting Minecraft installations and world paths in Windows"
+      ],
+      "learnings": [
+        "Working with binary formats and data structures",
+        "Practical application of the MVVM pattern in WPF",
+        "Separation of responsibilities between UI and business logic"
+      ]
+    },
+    "tags": [
+      {
+        "name": "C#",
+        "icon": { "name": "csharp" },
+        "color": "green",
+        "type": "pill"
+      },
+      {
+        "name": ".NET",
+        "icon": { "name": "dotnetcore" },
+        "color": "blue",
+        "type": "pill"
+      }
+    ],
+    "images": [
+      {
+        "url": "/projects/nbtmap-1.png",
+        "description": "Splash screen design (light variant). Initial screen with loading animation and Minecraft installation detection."
+      },
+      {
+        "url": "/projects/nbtmap-2.png",
+        "description": "Splash screen design (dark variant). Alternative version focused on a consistent dark mode visual experience."
+      }
+    ],
+    "repo_link": {
+      "label": "GitHub Repository",
+      "url": "https://github.com/Jorgemacias-12/NBTMap-Explorer",
+      "icon": { "name": "github" }
+    }
+  }
+]
+```
+
+### Project Fields
+
+- `name` - Project name
+- `description` - Brief project description
+- `status` - Project status (active, maintenance, completed, paused, planned, in_evaluation)
+- `context.problem` - Problem statement
+- `context.role` - Your role in the project
+- `context.approach` - Technical approach taken
+- `context.challenges` - Array of challenges faced
+- `context.learnings` - Array of key learnings
+- `tags` - Array of technology/topic tags
+- `images` - Array of project screenshot objects
+- `repo_link` - Repository link object (optional)
+
+### Project Status Values
+
+Available status values:
+- `active` - Project in active development
+- `maintenance` - Stable project receiving minor improvements
+- `completed` - Finished project with no active development
+- `paused` - Project temporarily stopped
+- `planned` - Project defined, not yet started
+- `in_evaluation` - Idea or project under feasibility analysis
+
+### Image Object
+
+- `url` - Path to image (relative to public directory)
+- `description` - Image description/caption
+
+### Repository Link Object
+
+- `label` - Link text
+- `url` - Repository URL
+- `icon.name` - Icon identifier (optional)
+
+## Education Entries
+
+Education entries track academic background:
+
+```json
+"education": [
+  {
+    "degree": "Computer Engineering",
+    "institution": "University of Guadalajara (UdeG)",
+    "campus": "CUCOSTA",
+    "startDate": "August 2021",
+    "endDate": "Present",
+    "gpa": "96.15/100",
+    "relevantProjects": [],
+    "courses": [],
+    "achievements": [],
+    "extracurricularActivities": [],
+    "schoolLink": "http://www.cuc.udg.mx/",
+    "finished": false,
+    "finished_caption": "In progress"
+  },
+  {
+    "degree": "Professional Technical Bachelor in Computer Science",
+    "institution": "National College of Professional Technical Education",
+    "campus": "Puerto Vallarta 075",
+    "startDate": "August 2018",
+    "endDate": "July 2021",
+    "gpa": "9.9/10",
+    "relevantProjects": [],
+    "courses": [],
+    "achievements": ["High averages"],
+    "extracurricularActivities": [],
+    "schoolLink": "https://www.conalep.edu.mx/",
+    "finished": true,
+    "finished_caption": "Completed"
+  }
+]
+```
+
+### Education Fields
+
+- `degree` - Degree or program name
+- `institution` - Institution name
+- `campus` - Campus or location
+- `startDate` - Start date (free-form text)
+- `endDate` - End date or "Present" for ongoing
+- `gpa` - Grade point average with scale
+- `relevantProjects` - Array of relevant project names (optional)
+- `courses` - Array of notable course names (optional)
+- `achievements` - Array of achievements or honors
+- `extracurricularActivities` - Array of activities (optional)
+- `schoolLink` - Institution website URL
+- `finished` - Boolean indicating completion status
+- `finished_caption` - Display text for completion status
+
+## Best Practices
+
+1. **Maintain Consistency**: Keep field structures consistent across all entries
+2. **Localize Everything**: Translate all content fields for each locale file
+3. **Use Proper Icons**: Set `isLucideIcon: true` for Lucide icons, `false` or omit for Simple Icons
+4. **Color Alignment**: Use colors from the Tailwind safelist (see [Styling Configuration](/configuration/styling))
+5. **Image Optimization**: Store images in the `public/` directory with descriptive filenames
+6. **Keep Arrays**: Even if empty, maintain array fields for future additions

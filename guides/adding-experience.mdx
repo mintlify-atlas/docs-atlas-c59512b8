@@ -1,0 +1,226 @@
+---
+title: Adding Work Experience
+description: Learn how to add professional experience entries to your portfolio
+---
+
+This guide explains how to add work experience entries to your Jorge Macias portfolio. Experience entries are displayed in the Professional Experience section.
+
+## Experience Data Structure
+
+Work experiences are stored in `src/locales/en.json` (and `es.json` for Spanish) under `sections_data.experiences` as an array of experience objects.
+
+### Required Fields
+
+Each experience entry requires the following fields:
+
+<ParamField path="role" type="string" required>
+  Your job title or role in the position (e.g., "Full Stack Developer", "Frontend Developer Trainee")
+</ParamField>
+
+<ParamField path="company" type="string" required>
+  The company or organization name
+</ParamField>
+
+<ParamField path="period" type="string" required>
+  The time period you worked there (e.g., "December 2024 – February 2025", "July 2022 – September 2023")
+</ParamField>
+
+<ParamField path="responsibilities" type="array" required>
+  Array of strings describing your key responsibilities and achievements in the role. Each string should be a complete sentence.
+</ParamField>
+
+<ParamField path="technologies" type="array" required>
+  Array of technology objects used in this role. Each technology has:
+  - `name` - Technology name (e.g., "React", "TypeScript", "REST API")
+  - `icon` - Icon object with `name` and optional `isLucideIcon` boolean
+  - `color` - Color name for the technology badge (e.g., "blue", "cyan", "orange")
+</ParamField>
+
+## Real Experience Example
+
+Here's a complete example from the portfolio - the SMCI Full Stack Developer position:
+
+```json
+{
+  "role": "Full Stack Developer",
+  "company": "SMCI",
+  "period": "December 2024 – February 2025",
+  "responsibilities": [
+    "Participation in the development of a software solution for the public transport sector, focused on real-time communication between embedded devices and a web management platform.",
+    "Development of a REST API for receiving, validating and processing data.",
+    "Automation of the deployment process for backend and frontend on the server.",
+    "Collaboration in fixing issues on the web dashboard.",
+    "Support in resolving problems related to React and TypeScript, especially regarding typing and code structure.",
+    "Contribution to the implementation of role-based access control and permissions."
+  ],
+  "technologies": [
+    {
+      "name": "REST API",
+      "icon": { "name": "server", "isLucideIcon": true },
+      "color": "blue"
+    },
+    { 
+      "name": "React", 
+      "icon": { "name": "react" }, 
+      "color": "cyan" 
+    },
+    {
+      "name": "TypeScript",
+      "icon": { "name": "typescript" },
+      "color": "blue"
+    },
+    { 
+      "name": "Git", 
+      "icon": { "name": "git" }, 
+      "color": "orange" 
+    },
+    {
+      "name": "CI/CD",
+      "icon": { "name": "workflow", "isLucideIcon": true },
+      "color": "violet"
+    }
+  ]
+}
+```
+
+## Another Example - Training Position
+
+Here's an example of a training/internship position:
+
+```json
+{
+  "role": "Frontend Developer Trainee",
+  "company": "DEVOCAMP",
+  "period": "July 2022 – September 2023",
+  "responsibilities": [
+    "Participation in a frontend development training program applying HTML5, CSS and JavaScript fundamentals.",
+    "Development of guided exercises and projects focused on basic frontend best practices.",
+    "Work under SCRUM methodology using work boards for task management and tracking.",
+    "Participation in daily meetings (dailies) for progress coordination and communication.",
+    "Reinforcement of collaborative work and task organization using management tools."
+  ],
+  "technologies": [
+    { "name": "HTML5", "icon": { "name": "html5" }, "color": "orange" },
+    { "name": "CSS", "icon": { "name": "css3" }, "color": "blue" },
+    { "name": "JavaScript", "icon": { "name": "javascript" }, "color": "yellow" },
+    { "name": "SCRUM", "icon": { "name": "users", "isLucideIcon": true }, "color": "rose" },
+    { "name": "Trello", "icon": { "name": "trello" }, "color": "blue" }
+  ]
+}
+```
+
+## Step-by-Step Guide
+
+<Steps>
+  <Step title="Open the locale file">
+    Navigate to `src/locales/en.json` (or `es.json` for Spanish content) in your project.
+  </Step>
+
+  <Step title="Find the experiences array">
+    Locate the `sections_data.experiences` array. This array contains all work experience entries, typically ordered from most recent to oldest.
+  </Step>
+
+  <Step title="Create your experience object">
+    Add a new object at the beginning of the experiences array (for most recent experience) or at the appropriate chronological position. Include all required fields:
+
+    ```json
+    {
+      "role": "Your Job Title",
+      "company": "Company Name",
+      "period": "Start Date – End Date",
+      "responsibilities": [
+        "First responsibility or achievement",
+        "Second responsibility or achievement"
+      ],
+      "technologies": [
+        { "name": "Tech 1", "icon": { "name": "icon-name" }, "color": "blue" }
+      ]
+    }
+    ```
+  </Step>
+
+  <Step title="Write clear responsibilities">
+    Focus on accomplishments and specific contributions rather than generic job duties. Use action verbs and be specific about what you achieved.
+
+    Good examples:
+    - "Development of a REST API for receiving, validating and processing data."
+    - "Automation of the deployment process for backend and frontend on the server."
+
+    Avoid vague statements:
+    - "Worked on various projects"
+    - "Helped the team"
+  </Step>
+
+  <Step title="Select appropriate technologies">
+    Choose technologies that were central to your role. Include:
+    - Programming languages you used
+    - Frameworks and libraries
+    - Tools and methodologies (Git, CI/CD, SCRUM)
+    - Platforms or services
+
+    Ensure color consistency - check existing entries for standard colors (e.g., React is typically "cyan", TypeScript is "blue").
+  </Step>
+
+  <Step title="Validate and test">
+    Ensure your JSON is valid and properly formatted. Run `bun dev` to verify the experience displays correctly on the Professional Experience page.
+  </Step>
+</Steps>
+
+## Technology Icons
+
+The portfolio supports two types of icons:
+
+### Simple Icons (Default)
+
+These are technology-specific icons from the simple-icons library. Common examples:
+
+- `"react"` - React framework
+- `"typescript"` - TypeScript
+- `"javascript"` - JavaScript
+- `"python"` - Python
+- `"git"` - Git
+- `"github"` - GitHub
+- `"nodejs"` - Node.js
+- `"html5"` - HTML5
+- `"css3"` - CSS3
+
+For simple-icons, just use `"icon": { "name": "icon-name" }`.
+
+### Lucide Icons
+
+These are general-purpose icons for concepts that don't have specific technology icons:
+
+- `"server"` - For APIs, backend services
+- `"workflow"` - For CI/CD, automation
+- `"users"` - For methodologies like SCRUM
+- `"database"` - For database work
+- `"cloud"` - For cloud services
+
+For Lucide icons, use `"icon": { "name": "icon-name", "isLucideIcon": true }`.
+
+## Color Options
+
+Standard colors available for technology badges:
+
+- `"blue"` - General technologies, TypeScript
+- `"cyan"` - React, frontend frameworks
+- `"green"` - Node.js, success-oriented tools
+- `"orange"` - HTML5, Git, build tools
+- `"yellow"` - JavaScript
+- `"violet"` - CI/CD, automation
+- `"rose"` - Methodologies, soft skills
+- `"purple"` - Databases, data-related
+- `"red"` - Testing, critical systems
+- `"pink"` - Design tools
+
+<Tip>
+  Keep your responsibilities list between 4-6 items for optimal readability. Focus on the most impactful contributions.
+</Tip>
+
+<Tip>
+  List 3-6 key technologies per position. Too many technologies can dilute the message about your core skills in that role.
+</Tip>
+
+<Warning>
+  Maintain consistency in how you format dates across all experience entries. Use the format "Month Year – Month Year" or "Month Year – Present" for current positions.
+</Warning>
